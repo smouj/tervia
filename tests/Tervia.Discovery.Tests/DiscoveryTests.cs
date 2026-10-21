@@ -63,6 +63,19 @@ public sealed class DiscoveryTests
         Assert.Single(candidates);
     }
 
+    [Fact]
+    public async Task Detailed_report_keeps_strategy_failures_visible()
+    {
+        var service = new TvDiscoveryService([new ThrowingStrategy()]);
+
+        var report = await service.DiscoverDetailedAsync(CancellationToken.None);
+
+        Assert.Empty(report.Candidates);
+        var failure = Assert.Single(report.Failures);
+        Assert.Equal("boom", failure.Strategy);
+        Assert.Equal("network down", failure.Message);
+    }
+
     private sealed class ThrowingStrategy : ITvDiscoveryStrategy
     {
         public string Name => "boom";

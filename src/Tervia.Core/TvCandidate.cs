@@ -7,6 +7,7 @@ public sealed record TvCandidate
     public required string Address { get; init; }
     public required string DiscoveryProtocol { get; init; }
     public string? ManufacturerHint { get; init; }
+    public string? ModelHint { get; init; }
     public TvPlatform PlatformHint { get; init; } = TvPlatform.Unknown;
     public double Confidence { get; init; }
 }
