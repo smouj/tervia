@@ -58,7 +58,7 @@
                     <controls:NavigationViewItem.Icon><SymbolIcon Symbol="Home" /></controls:NavigationViewItem.Icon>
                 </controls:NavigationViewItem>
                 <controls:NavigationViewItem Content="Mis televisores" Tag="devices">
-                    <controls:NavigationViewItem.Icon><SymbolIcon Symbol="TVMonitor" /></controls:NavigationViewItem.Icon>
+                    <controls:NavigationViewItem.Icon><SymbolIcon Symbol="View" /></controls:NavigationViewItem.Icon>
                 </controls:NavigationViewItem>
                 <controls:NavigationViewItem Content="Descubrir" Tag="discovery">
                     <controls:NavigationViewItem.Icon><SymbolIcon Symbol="Find" /></controls:NavigationViewItem.Icon>
