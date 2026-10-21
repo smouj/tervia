@@ -7,7 +7,7 @@ using Tervia.Infrastructure;
 
 namespace Tervia.App;
 
-public partial class App : Application
+public partial class App : Microsoft.UI.Xaml.Application
 {
     private readonly ServiceProvider _services;
     private Window? _window;
