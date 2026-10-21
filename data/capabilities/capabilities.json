@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "capabilities": [
+    { "id": "remote.navigation", "risk": "safe" },
+    { "id": "remote.home", "risk": "safe" },
+    { "id": "remote.back", "risk": "safe" },
+    { "id": "remote.keyboard", "risk": "safe" },
+    { "id": "power.read", "risk": "low" },
+    { "id": "power.on", "risk": "medium" },
+    { "id": "power.off", "risk": "low" },
+    { "id": "volume.read", "risk": "safe" },
+    { "id": "volume.change", "risk": "low" },
+    { "id": "volume.mute", "risk": "low" },
+    { "id": "input.list", "risk": "safe" },
+    { "id": "input.switch", "risk": "low" },
+    { "id": "apps.list", "risk": "safe" },
+    { "id": "apps.launch", "risk": "low" },
+    { "id": "apps.stop", "risk": "medium" },
+    { "id": "apps.install", "risk": "high" },
+    { "id": "apps.remove", "risk": "high" },
+    { "id": "display.read.resolution", "risk": "safe" },
+    { "id": "display.change.picturemode", "risk": "medium" },
+    { "id": "diagnostics.systeminfo", "risk": "safe" },
+    { "id": "developer.logs", "risk": "medium" },
+    { "id": "developer.screenshot", "risk": "safe" },
+    { "id": "developer.shell", "risk": "high" },
+    { "id": "maintenance.listpackages", "risk": "low" },
+    { "id": "maintenance.disablepackage", "risk": "high" },
+    { "id": "maintenance.uninstallpackage", "risk": "high" },
+    { "id": "recovery.snapshot", "risk": "medium" },
+    { "id": "recovery.restore", "risk": "high" }
+  ]
+}

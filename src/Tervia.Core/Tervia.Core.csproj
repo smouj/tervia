@@ -1,0 +1,5 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\Tervia.Capabilities\Tervia.Capabilities.csproj" />
+  </ItemGroup>
+</Project>

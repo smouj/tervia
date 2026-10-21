@@ -1,0 +1,26 @@
+name: Bug report
+description: Report a defect in Tervia
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+    validations:
+      required: true
+  - type: input
+    id: tv
+    attributes:
+      label: Television model and platform
+      placeholder: Samsung QN90B, Tizen
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs
+      description: Remove IP addresses and serial numbers before pasting.
