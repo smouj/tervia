@@ -1,0 +1,62 @@
+<Page
+    x:Class="Tervia.App.Pages.DevicesPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:Microsoft.UI.Xaml.Controls">
+    <Grid Margin="32,28" ColumnSpacing="26" MaxWidth="1120" HorizontalAlignment="Left">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="380" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.ColumnSpan="2" Spacing="5" Margin="0,0,0,16">
+            <TextBlock Text="Mis televisores" Style="{StaticResource TitleTextBlockStyle}" />
+            <TextBlock Text="Perfiles guardados únicamente en este equipo. Selecciona uno para verlo en el resumen."
+                       Style="{StaticResource BodyTextBlockStyle}" Opacity="0.78" TextWrapping="Wrap" />
+        </StackPanel>
+
+        <Grid Grid.Row="1">
+            <ListView x:Name="DeviceList" ItemsSource="{x:Bind ViewModel.Shell.Devices, Mode=OneWay}"
+                      SelectionMode="Single" SelectionChanged="OnDeviceSelectionChanged"
+                      AutomationProperties.Name="Biblioteca de televisores">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Margin="8,10" Spacing="3">
+                            <TextBlock Text="{Binding FriendlyName}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+                            <TextBlock Text="{Binding NetworkAddress}" FontFamily="Consolas" FontSize="12" Opacity="0.78" />
+                            <TextBlock Text="{Binding Platform}" FontSize="12" Opacity="0.72" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+            <TextBlock Text="Todavía no hay perfiles guardados. Añade una TV desde Descubrir."
+                       Margin="14,18" TextWrapping="Wrap" Opacity="0.72"
+                       IsHitTestVisible="False"
+                       Visibility="{x:Bind ViewModel.Shell.HasDevices, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+        </Grid>
+
+        <Border Grid.Column="1" Grid.Row="1" Padding="22" CornerRadius="8"
+                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1">
+            <StackPanel Spacing="16">
+                <StackPanel Spacing="5">
+                    <TextBlock Text="Perfil local" FontSize="11" CharacterSpacing="100" Opacity="0.7" />
+                    <TextBlock x:Name="SelectedName" Text="Selecciona un televisor" Style="{StaticResource SubtitleTextBlockStyle}"
+                               TextWrapping="Wrap" />
+                    <TextBlock x:Name="SelectedAddress" FontFamily="Consolas" />
+                </StackPanel>
+                <TextBlock x:Name="SelectedDetails" TextWrapping="Wrap" Opacity="0.78" />
+                <TextBlock Text="Las capacidades permanecen sin verificar hasta ejecutar un flujo de identificación compatible. Guardar un perfil no inicia una conexión."
+                           TextWrapping="Wrap" MaxWidth="620" />
+                <Button x:Name="RemoveButton" Content="Quitar de la biblioteca" Click="OnRemoveClick"
+                        HorizontalAlignment="Left" IsEnabled="False" />
+                <TextBlock x:Name="ErrorText" Foreground="{ThemeResource SystemFillColorCriticalBrush}"
+                           TextWrapping="Wrap" Visibility="Collapsed" />
+            </StackPanel>
+        </Border>
+    </Grid>
+</Page>

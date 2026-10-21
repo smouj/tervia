@@ -2,8 +2,8 @@ using System.Collections.Concurrent;
 
 namespace Tervia.Application;
 
-/// <summary>Serialises state changing operations per television.</summary>
-public sealed class TvOperationQueue : IDisposable
+/// <summary>Serialises state-changing operations per television.</summary>
+public sealed class TvOperationScheduler : IDisposable
 {
     private readonly ConcurrentDictionary<string, SemaphoreSlim> _gates = new(StringComparer.Ordinal);
 

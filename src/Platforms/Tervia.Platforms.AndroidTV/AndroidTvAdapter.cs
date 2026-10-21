@@ -7,7 +7,7 @@ namespace Tervia.Platforms.AndroidTV;
 
 public sealed class AndroidTvAdapter : ITvPlatformAdapter, ITvRemoteControl, ITvApplicationManager, ITvDiagnosticsProvider
 {
-    private static readonly IReadOnlyDictionary<TvRemoteKey, int> KeyCodes = new Dictionary<TvRemoteKey, int>
+    private static readonly Dictionary<TvRemoteKey, int> KeyCodes = new()
     {
         [TvRemoteKey.Up] = 19,
         [TvRemoteKey.Down] = 20,

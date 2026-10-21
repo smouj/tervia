@@ -1,0 +1,84 @@
+<Page
+    x:Class="Tervia.App.Pages.DashboardPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:Microsoft.UI.Xaml.Controls"
+    xmlns:capabilities="using:Tervia.Capabilities">
+    <ScrollViewer>
+        <StackPanel Margin="32,28" Spacing="22" MaxWidth="1120" HorizontalAlignment="Left">
+            <StackPanel Spacing="5">
+                <TextBlock Text="Resumen" Style="{StaticResource TitleTextBlockStyle}" />
+                <TextBlock Text="Dispositivos y capacidades comprobadas en esta red local."
+                           Style="{StaticResource BodyTextBlockStyle}" Opacity="0.78" />
+            </StackPanel>
+
+            <controls:InfoBar IsOpen="{x:Bind ViewModel.HasLibraryError, Mode=OneWay}"
+                              Severity="Error" Title="Biblioteca local"
+                              Message="{x:Bind ViewModel.LibraryError, Mode=OneWay}" />
+
+            <Border Padding="22" CornerRadius="8" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1">
+                <Grid ColumnSpacing="28">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="TELEVISOR SELECCIONADO" FontSize="10" CharacterSpacing="100" Opacity="0.7" />
+                        <TextBlock Text="{x:Bind ViewModel.DeviceName, Mode=OneWay}"
+                                   Style="{StaticResource SubtitleTextBlockStyle}" TextWrapping="Wrap" />
+                        <TextBlock Text="{x:Bind ViewModel.DeviceAddress, Mode=OneWay}" FontFamily="Consolas" />
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <Border Padding="9,4" CornerRadius="5" Background="{ThemeResource ControlFillColorSecondaryBrush}">
+                                <TextBlock Text="{x:Bind ViewModel.DevicePlatform, Mode=OneWay}" />
+                            </Border>
+                            <Border Padding="9,4" CornerRadius="5" Background="{ThemeResource ControlFillColorSecondaryBrush}">
+                                <TextBlock Text="{x:Bind ViewModel.DeviceStatus, Mode=OneWay}" />
+                            </Border>
+                            <TextBlock Text="{x:Bind ViewModel.DeviceRoom, Mode=OneWay}" VerticalAlignment="Center" Opacity="0.72" />
+                        </StackPanel>
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" Spacing="6" MinWidth="170" VerticalAlignment="Center">
+                        <TextBlock Text="CAPACIDADES" FontSize="10" CharacterSpacing="100" Opacity="0.7" />
+                        <TextBlock Text="{x:Bind ViewModel.SupportedSummary, Mode=OneWay}" />
+                        <TextBlock Text="{x:Bind ViewModel.NeedsSetupSummary, Mode=OneWay}" />
+                        <TextBlock Text="{x:Bind ViewModel.UnknownSummary, Mode=OneWay}" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <StackPanel Spacing="10">
+                <TextBlock Text="Capacidades detectadas" Style="{StaticResource SubtitleTextBlockStyle}" />
+                <TextBlock Text="Aparecen después de identificar el televisor y comprobar sus funciones."
+                           Visibility="{x:Bind ViewModel.HasCapabilities, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}"
+                           TextWrapping="Wrap" Opacity="0.76" />
+                <ListView ItemsSource="{x:Bind ViewModel.Capabilities, Mode=OneWay}"
+                          IsItemClickEnabled="False" SelectionMode="None"
+                          Visibility="{x:Bind ViewModel.HasCapabilities, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="capabilities:CapabilityInfo">
+                            <Grid Margin="6,8" ColumnSpacing="18">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="2*" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="3*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="{x:Bind Id.Value}" FontFamily="Consolas" VerticalAlignment="Center" />
+                                <TextBlock Grid.Column="1" Text="{x:Bind Status}" VerticalAlignment="Center" />
+                                <TextBlock Grid.Column="2" Text="{x:Bind Reason}" TextWrapping="Wrap" Opacity="0.75" />
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </StackPanel>
+
+            <Border Padding="16" CornerRadius="8" Background="{ThemeResource ControlFillColorSecondaryBrush}">
+                <StackPanel Spacing="4">
+                    <TextBlock Text="Sin conexión automática" FontWeight="SemiBold" />
+                    <TextBlock Text="El descubrimiento solo recopila anuncios de la red local. Tervia no intenta emparejarse ni controlar un TV hasta que selecciones explícitamente el dispositivo y exista una capacidad verificada."
+                               TextWrapping="Wrap" MaxWidth="900" />
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</Page>

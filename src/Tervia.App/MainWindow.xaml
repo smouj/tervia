@@ -1,0 +1,73 @@
+<Window
+    x:Class="Tervia.App.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:Microsoft.UI.Xaml.Controls"
+    Title="Tervia">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" Padding="20,12" BorderThickness="0,0,0,1"
+                BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}">
+            <Grid ColumnSpacing="20">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                    <Image Source="ms-appx:///Assets/logo-tervia-color.png" Width="34" Height="34"
+                           Stretch="Uniform" AutomationProperties.Name="Logotipo de Tervia" />
+                    <StackPanel Spacing="0" VerticalAlignment="Center">
+                        <TextBlock Text="TERVIA" FontSize="16" FontWeight="SemiBold" />
+                        <TextBlock Text="GESTIÓN LOCAL DE TV" FontSize="9" CharacterSpacing="120" Opacity="0.72" />
+                    </StackPanel>
+                </StackPanel>
+
+                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                    <StackPanel Spacing="2" VerticalAlignment="Center">
+                        <TextBlock Text="TELEVISOR ACTIVO" FontSize="9" CharacterSpacing="90" Opacity="0.72"
+                                   HorizontalAlignment="Right" />
+                        <TextBlock Text="{x:Bind Shell.SelectedPlatformLabel, Mode=OneWay}"
+                                   FontSize="12" HorizontalAlignment="Right" />
+                    </StackPanel>
+                    <ComboBox x:Name="DevicePicker" Width="240" MaxWidth="320"
+                              ItemsSource="{x:Bind Shell.Devices, Mode=OneWay}"
+                              SelectedItem="{x:Bind Shell.SelectedDevice, Mode=TwoWay}"
+                              DisplayMemberPath="FriendlyName"
+                              PlaceholderText="Selecciona un televisor"
+                              AutomationProperties.Name="Televisor seleccionado" />
+                    <Border Padding="10,5" CornerRadius="6" Background="{ThemeResource ControlFillColorSecondaryBrush}">
+                        <TextBlock Text="{x:Bind Shell.SelectedStatusLabel, Mode=OneWay}" FontSize="11"
+                                   AutomationProperties.Name="Estado de conexión del televisor" />
+                    </Border>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <controls:NavigationView x:Name="Navigation" Grid.Row="1"
+                                 PaneDisplayMode="LeftCompact"
+                                 IsSettingsVisible="False"
+                                 SelectionChanged="OnNavigationSelectionChanged"
+                                 AutomationProperties.Name="Navegación principal">
+            <controls:NavigationView.MenuItems>
+                <controls:NavigationViewItem Content="Resumen" Tag="dashboard">
+                    <controls:NavigationViewItem.Icon><SymbolIcon Symbol="Home" /></controls:NavigationViewItem.Icon>
+                </controls:NavigationViewItem>
+                <controls:NavigationViewItem Content="Mis televisores" Tag="devices">
+                    <controls:NavigationViewItem.Icon><SymbolIcon Symbol="TVMonitor" /></controls:NavigationViewItem.Icon>
+                </controls:NavigationViewItem>
+                <controls:NavigationViewItem Content="Descubrir" Tag="discovery">
+                    <controls:NavigationViewItem.Icon><SymbolIcon Symbol="Find" /></controls:NavigationViewItem.Icon>
+                </controls:NavigationViewItem>
+                <controls:NavigationViewItem Content="Privacidad y datos" Tag="settings">
+                    <controls:NavigationViewItem.Icon><SymbolIcon Symbol="Setting" /></controls:NavigationViewItem.Icon>
+                </controls:NavigationViewItem>
+            </controls:NavigationView.MenuItems>
+            <Frame x:Name="ContentFrame" />
+        </controls:NavigationView>
+    </Grid>
+</Window>

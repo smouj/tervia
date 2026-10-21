@@ -5,12 +5,16 @@ namespace Tervia.Platforms.Tests;
 
 public sealed class AdbCommandLineTests
 {
+    private static readonly string[] PackageListArguments = ["-s", "192.168.1.30:5555", "shell", "pm", "list", "packages"];
+    private static readonly string[] VersionArguments = ["version"];
+    private static readonly string[] GetPropertyArguments = ["-s", "abc", "shell", "getprop", "ro.product.model"];
+
     [Fact]
     public void Serial_is_passed_as_structured_arguments()
     {
         var args = AdbCommandLine.Shell("192.168.1.30:5555", "pm", "list", "packages");
 
-        Assert.Equal(new[] { "-s", "192.168.1.30:5555", "shell", "pm", "list", "packages" }, args);
+        Assert.Equal(PackageListArguments, args);
     }
 
     [Fact]
@@ -18,7 +22,7 @@ public sealed class AdbCommandLineTests
     {
         var args = AdbCommandLine.ForDevice(null, "version");
 
-        Assert.Equal(new[] { "version" }, args);
+        Assert.Equal(VersionArguments, args);
     }
 
     [Fact]
@@ -26,7 +30,7 @@ public sealed class AdbCommandLineTests
     {
         var args = AdbCommandLine.GetProp("abc", "ro.product.model");
 
-        Assert.Equal(new[] { "-s", "abc", "shell", "getprop", "ro.product.model" }, args);
+        Assert.Equal(GetPropertyArguments, args);
     }
 
     [Fact]

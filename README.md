@@ -105,11 +105,12 @@ on any OS with the .NET 10 SDK.
 
 ## Status
 
-Early development. The architecture, domain model, capability engine, safety
-engine, discovery framework and mock environment are implemented and tested.
-Platform adapters are being built in the order defined by the specification:
-Android TV first as the reference adapter, then Tizen, webOS, Roku TV and VIDAA.
-The WinUI 3 shell lands after the platform contracts are proven by tests.
+Early development. The domain model, capability and safety engines, SSDP/mDNS
+discovery, Android TV and Roku protocol adapters, mock environment, and initial
+WinUI 3 shell are implemented. The shell includes a local TV library, explicit
+physical-TV confirmation, manual IP entry, a capability summary, and privacy
+information. It does not claim hardware validation or expose unverified control
+actions. Tizen, webOS and VIDAA still need their vendor setup and hardware flows.
 
 See [CHANGELOG.md](CHANGELOG.md) for the milestone log.
 

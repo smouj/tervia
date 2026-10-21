@@ -9,6 +9,8 @@ namespace Tervia.IntegrationTests;
 
 public sealed class SessionTests
 {
+    private static readonly int[] ExpectedOperationOrder = [1, 2];
+
     [Fact]
     public void Registry_resolves_registered_platform()
     {
@@ -61,12 +63,12 @@ public sealed class SessionTests
     [Fact]
     public async Task Operation_queue_serialises_the_same_television()
     {
-        using var queue = new TvOperationQueue();
+        using var queue = new TvOperationScheduler();
         var order = new List<int>();
 
         var first = queue.ExecuteAsync("tv", async _ =>
         {
-            await Task.Delay(30);
+            await Task.Delay(30, CancellationToken.None);
             order.Add(1);
             return 1;
         }, CancellationToken.None);
@@ -79,7 +81,7 @@ public sealed class SessionTests
 
         await Task.WhenAll(first, second);
 
-        Assert.Equal(new[] { 1, 2 }, order);
+        Assert.Equal(ExpectedOperationOrder, order);
     }
 
     [Fact]

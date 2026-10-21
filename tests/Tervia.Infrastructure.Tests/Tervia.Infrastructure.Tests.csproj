@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Tervia.Infrastructure\Tervia.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\Tervia.Core\Tervia.Core.csproj" />
+    <ProjectReference Include="..\..\src\Tervia.Capabilities\Tervia.Capabilities.csproj" />
+  </ItemGroup>
+</Project>
