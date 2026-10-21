@@ -1,0 +1,26 @@
+{
+  "solution": {
+    "path": "Tervia.sln",
+    "projects": [
+      "src/Platforms/Tervia.Platforms.AndroidTV/Tervia.Platforms.AndroidTV.csproj",
+      "src/Platforms/Tervia.Platforms.Roku/Tervia.Platforms.Roku.csproj",
+      "src/Platforms/Tervia.Platforms.Tizen/Tervia.Platforms.Tizen.csproj",
+      "src/Platforms/Tervia.Platforms.Vidaa/Tervia.Platforms.Vidaa.csproj",
+      "src/Platforms/Tervia.Platforms.WebOS/Tervia.Platforms.WebOS.csproj",
+      "src/Tervia.Application/Tervia.Application.csproj",
+      "src/Tervia.Capabilities/Tervia.Capabilities.csproj",
+      "src/Tervia.Core/Tervia.Core.csproj",
+      "src/Tervia.Discovery/Tervia.Discovery.csproj",
+      "src/Tervia.Infrastructure/Tervia.Infrastructure.csproj",
+      "src/Tervia.Safety/Tervia.Safety.csproj",
+      "src/Tervia.Testing.Mocks/Tervia.Testing.Mocks.csproj",
+      "tests/Tervia.Capabilities.Tests/Tervia.Capabilities.Tests.csproj",
+      "tests/Tervia.Core.Tests/Tervia.Core.Tests.csproj",
+      "tests/Tervia.Discovery.Tests/Tervia.Discovery.Tests.csproj",
+      "tests/Tervia.Infrastructure.Tests/Tervia.Infrastructure.Tests.csproj",
+      "tests/Tervia.IntegrationTests/Tervia.IntegrationTests.csproj",
+      "tests/Tervia.Platforms.Tests/Tervia.Platforms.Tests.csproj",
+      "tests/Tervia.Safety.Tests/Tervia.Safety.Tests.csproj"
+    ]
+  }
+}

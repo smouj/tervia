@@ -4,11 +4,15 @@ Context for a coding agent continuing this repository.
 
 ## Current state
 
-- Architecture, domain, capabilities, safety, discovery, infrastructure,
-  Android TV and Roku adapters, mocks and tests are in place.
+- Architecture, domain, capabilities, safety, SSDP/mDNS discovery, local JSON
+  TV profiles, Android TV and Roku adapters, mocks and tests are in place.
+- The first WinUI 3 shell provides a TV library, local discovery, explicit
+  physical-device confirmation, capability summary and privacy/data view.
+- The shell deliberately has no control actions until a TV identification and
+  capability-probe flow can substantiate them.
 - Tizen, webOS and VIDAA adapters currently publish capability sets only; their
   operations are intentionally unimplemented.
-- The WinUI 3 shell is the next milestone.
+- Windows CI builds the WinUI app; portable CI builds and tests the libraries.
 
 ## Rules that must not be broken
 
@@ -22,7 +26,8 @@ Context for a coding agent continuing this repository.
 
 ## Next milestones
 
-- M5: mDNS strategy and a real SSDP listener with cancellation.
-- M6: WinUI 3 shell (TV library, dashboard, capability-driven sections).
 - M7: Android TV integration tests against a fake ADB executable.
 - M8: Tizen pairing token flow and Developer Mode detection.
+- M9: webOS pairing and Developer Mode flow.
+- M10: Roku TV hardware validation and compatibility records.
+- M11: VIDAA discovery and operation validation.

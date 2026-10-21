@@ -1,0 +1,65 @@
+name: Windows release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: windows-release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - name: Publish self-contained app
+        shell: pwsh
+        run: |
+          $version = $env:GITHUB_REF_NAME -replace '^v', ''
+          .\scripts\publish-windows.ps1 -OutputDirectory (Join-Path $env:RUNNER_TEMP 'tervia-publish') -Version $version
+      - name: Create GitHub release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $tag = $env:GITHUB_REF_NAME
+          $publishDirectory = Join-Path $env:RUNNER_TEMP 'tervia-publish'
+          $executable = Join-Path $publishDirectory 'Tervia.exe'
+          $archive = Join-Path $env:RUNNER_TEMP 'Tervia-win-x64.zip'
+          $downloadName = 'Tervia-win-x64.zip'
+          Compress-Archive -Path (Join-Path $publishDirectory '*') -DestinationPath $archive -CompressionLevel Optimal
+          $checksumFile = Join-Path $publishDirectory 'SHA256SUMS.txt'
+          $hash = (Get-FileHash -LiteralPath $archive -Algorithm SHA256).Hash.ToLowerInvariant()
+          "$hash  $downloadName" | Set-Content -LiteralPath $checksumFile -Encoding utf8NoBOM
+          $notesFile = Join-Path $publishDirectory 'release-notes.md'
+          @'
+          Descarga y extrae `Tervia-win-x64.zip`; después abre `Tervia.exe` en Windows 10/11 x64.
+
+          Esta versión alpha ofrece el shell de escritorio, el descubrimiento local y la biblioteca de perfiles. El control remoto y la validación en televisores físicos siguen pendientes.
+
+          Comprueba el SHA-256 con `SHA256SUMS.txt`. El ejecutable no tiene firma comercial y Windows SmartScreen puede mostrar un aviso.
+          '@ | Set-Content -LiteralPath $notesFile -Encoding utf8NoBOM
+          $arguments = @(
+            'release', 'create', $tag,
+            "$archive#$downloadName",
+            "$checksumFile#SHA256SUMS.txt",
+            '--title', "Tervia $tag",
+            '--notes-file', $notesFile,
+            '--verify-tag',
+            '--repo', $env:GITHUB_REPOSITORY
+          )
+          if ($tag.Contains('-')) {
+            $arguments += '--prerelease'
+          }
+          & gh @arguments
+          if ($LASTEXITCODE -ne 0) {
+            throw "gh release create failed with exit code $LASTEXITCODE"
+          }

@@ -7,6 +7,19 @@ project uses semantic versioning once the first release exists.
 
 ### Added
 
+- Redesigned the Spanish-first WinUI home dashboard and added a direct path to manual
+  IP entry.
+- Prepared an x64 self-contained single-file Windows download with SHA-256 on tagged
+  GitHub releases.
+- Rewrote public compatibility, privacy, and install documentation to distinguish
+  implemented desktop features from unverified TV protocols.
+
+- M5 SSDP multicast discovery listener and mDNS/DNS-SD parsing with cancellation,
+  address deduplication, bounded packets and per-strategy failure reporting.
+- Initial M6 WinUI 3 shell with local TV library, manual IP entry, user-confirmed
+  physical-TV enrollment, profile management, capability summary and privacy view.
+- Versioned atomic JSON TV-profile storage with capability-evidence persistence.
+- Windows CI build for the WinUI app and a portable solution filter for Linux CI.
 - Repository foundation: MIT license, security policy, contribution guide,
   CI, CodeQL and dependency review.
 - `Tervia.Core`: TV device, session, candidate, application, input and snapshot

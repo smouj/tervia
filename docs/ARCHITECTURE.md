@@ -9,7 +9,7 @@ Tervia.Safety         risk decisions and per-platform policies
 Tervia.Capabilities   capability ids, statuses, capability sets
 Tervia.Core           domain model, errors, remote keys, snapshots
 Tervia.Discovery      discovery strategies and SSDP parsing
-Tervia.Infrastructure process execution, local storage
+Tervia.Infrastructure process execution, local JSON profile storage
 Platforms/*           one adapter per ecosystem
 ```
 
@@ -22,7 +22,16 @@ ECP client or any UI framework.
 Every television receives a `CapabilitySet` produced by probing, not by a
 hardcoded table. A capability carries a status (`Supported`, `Restricted`,
 `Unavailable`, `Unknown`), a risk level and a reason. The UI renders only what
-is usable and explains the rest.
+is usable and explains the rest. The current shell shows verified capability
+records but does not expose control actions before identification and probing.
+
+## Local library
+
+`ITvDeviceLibrary` is an application boundary. `JsonTvDeviceLibrary` stores
+versioned profiles under the user's local application data directory and writes
+through a same-directory temporary file before replacement. The store contains
+device metadata and capability evidence only; it does not persist pairing
+secrets or credentials.
 
 ## Sessions
 
@@ -37,5 +46,5 @@ and denies `Critical`. Unknown risk is never treated as safe.
 
 ## Operations
 
-`TvOperationQueue` serialises state changing calls per television so an install,
+`TvOperationScheduler` serialises state-changing calls per television so an install,
 a restore and a reboot never race.

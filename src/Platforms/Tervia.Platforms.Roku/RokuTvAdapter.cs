@@ -7,7 +7,7 @@ namespace Tervia.Platforms.Roku;
 
 public sealed class RokuTvAdapter : ITvPlatformAdapter, ITvRemoteControl, ITvApplicationManager, ITvDiagnosticsProvider
 {
-    private static readonly IReadOnlyDictionary<TvRemoteKey, string> Keys = new Dictionary<TvRemoteKey, string>
+    private static readonly Dictionary<TvRemoteKey, string> Keys = new()
     {
         [TvRemoteKey.Up] = "Up",
         [TvRemoteKey.Down] = "Down",

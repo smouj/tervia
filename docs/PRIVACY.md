@@ -1,13 +1,24 @@
-# Privacy
+# Privacidad
 
-Tervia is local first.
+Tervia es local-first. La alpha no tiene cuenta, publicidad, telemetría ni servicio
+remoto de Tervia.
 
-- No account, no subscription, no advertising, no telemetry.
-- Television names, rooms, profiles, snapshots, diagnostics and logs are stored
-  under `%LOCALAPPDATA%\Tervia`.
-- The application does not send data to any server owned by the project.
-- Diagnostic exports are generated locally and anonymised on request (IP, MAC,
-  serial number and device identifiers removed).
+## Lo que hace la alpha
 
-Vendor developer tooling may contact the vendor's own services; that is a vendor
-requirement, not a Tervia service.
+- Guarda la biblioteca de televisores en `%LOCALAPPDATA%\Tervia\tvs\library.json`.
+- La búsqueda envía consultas SSDP/mDNS en la red local y recibe anuncios de los
+  dispositivos que respondan. No usa un servidor de Tervia.
+- El alta manual valida la sintaxis de una dirección IP, pero no intenta conectarse a
+  esa dirección.
+- La aplicación no guarda credenciales ni tokens de pairing; el pairing aún no está
+  implementado.
+
+El archivo local contiene nombres, direcciones y los datos de perfil que el usuario
+añade. El usuario controla el acceso al perfil de Windows y puede cerrar Tervia y
+eliminar esa carpeta para borrar su biblioteca.
+
+## Límites
+
+Las herramientas oficiales de fabricantes que se incorporen en versiones futuras
+podrían tener su propio tráfico o avisos de red. Tervia no afirma que la alpha actual
+exporte diagnósticos anonimizados ni que capture pantallas de televisores.

@@ -10,7 +10,7 @@ permissions:
   contents: read
 
 jobs:
-  build-test:
+  portable-build-test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -18,8 +18,25 @@ jobs:
         with:
           dotnet-version: 10.0.x
       - name: Restore
-        run: dotnet restore Tervia.sln
+        run: dotnet restore Tervia.Portable.slnf
       - name: Build
-        run: dotnet build Tervia.sln -c Release --no-restore
+        run: dotnet build Tervia.Portable.slnf -c Release --no-restore
       - name: Test
-        run: dotnet test Tervia.sln -c Release --no-build
+        run: dotnet test Tervia.Portable.slnf -c Release --no-build
+
+  windows-shell-build-test:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - name: Restore Windows solution
+        run: dotnet restore Tervia.sln -p:Platform=x64
+      - name: Build WinUI shell and portable projects
+        run: dotnet build Tervia.sln -c Release -p:Platform=x64 --no-restore
+      - name: Run test suite
+        run: dotnet test Tervia.sln -c Release -p:Platform=x64 --no-build --no-restore
+      - name: Validate self-contained Windows publish
+        shell: pwsh
+        run: .\scripts\publish-windows.ps1 -OutputDirectory "$env:RUNNER_TEMP\tervia-publish"

@@ -1,11 +1,12 @@
 using Tervia.Core;
+using System.Net;
 
 namespace Tervia.Discovery;
 
 /// <summary>Parses an SSDP response or NOTIFY payload into a candidate.</summary>
 public static class SsdpResponseParser
 {
-    public static TvCandidate? Parse(string payload)
+    public static TvCandidate? Parse(string payload, IPAddress? sourceAddress = null)
     {
         if (string.IsNullOrWhiteSpace(payload))
         {
@@ -38,11 +39,15 @@ public static class SsdpResponseParser
         }
 
         var location = Get(headers, "LOCATION");
-        var address = location is null ? null : ExtractHost(location);
+        // During a real scan, use the sender address from the local UDP packet.
+        // LOCATION is untrusted input and must not redirect the user toward a
+        // different host when they later choose to connect.
+        var address = sourceAddress?.ToString() ?? (location is null ? null : ExtractHost(location));
         var server = Get(headers, "SERVER") ?? string.Empty;
         var usn = Get(headers, "USN") ?? string.Empty;
         var st = Get(headers, "ST") ?? string.Empty;
-        var name = Get(headers, "FRIENDLYNAME") ?? Get(headers, "DEVICENAME") ?? Get(headers, "MODELNAME");
+        var model = Get(headers, "MODELNAME") ?? Get(headers, "MODEL");
+        var name = Get(headers, "FRIENDLYNAME") ?? Get(headers, "DEVICENAME") ?? model;
 
         if (address is null && name is null)
         {
@@ -57,12 +62,13 @@ public static class SsdpResponseParser
             Address = address ?? "unknown",
             DiscoveryProtocol = "ssdp",
             ManufacturerHint = DetectManufacturer(server, usn),
+            ModelHint = model,
             PlatformHint = platform,
             Confidence = platform == TvPlatform.Unknown ? 0.4 : 0.8,
         };
     }
 
-    private static string? Get(IReadOnlyDictionary<string, string> headers, string key)
+    private static string? Get(Dictionary<string, string> headers, string key)
         => headers.TryGetValue(key, out var value) && value.Length > 0 ? value : null;
 
     private static string? ExtractHost(string location)

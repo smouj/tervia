@@ -6,6 +6,7 @@
 - `Tervia.Capabilities.Tests` — capability statuses and sets
 - `Tervia.Safety.Tests` — risk policy and denials
 - `Tervia.Discovery.Tests` — SSDP parsing, deduplication, failing strategies
+- `Tervia.Infrastructure.Tests` — local profile round-trip, updates and removal
 - `Tervia.Platforms.Tests` — structured argument construction
 - `Tervia.IntegrationTests` — registry, session service, operation queue
 
@@ -27,3 +28,7 @@ capability sets. A mock never supports everything:
 
 Record every tested model in `docs/COMPATIBILITY.md` with OS version, firmware and
 the exact features exercised. CI never requires a physical television.
+
+The WinUI shell is built by the Windows CI job. Portable libraries and tests run
+on Linux so parsers and local persistence remain exercisable without Windows app
+tooling.

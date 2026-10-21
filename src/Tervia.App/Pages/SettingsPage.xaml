@@ -1,0 +1,46 @@
+<Page
+    x:Class="Tervia.App.Pages.SettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <ScrollViewer>
+        <StackPanel Margin="32,28" Spacing="22" MaxWidth="900" HorizontalAlignment="Left">
+            <StackPanel Spacing="5">
+                <TextBlock Text="Privacidad y datos" Style="{StaticResource TitleTextBlockStyle}" />
+                <TextBlock Text="Tervia mantiene la biblioteca en el perfil local de Windows."
+                           Style="{StaticResource BodyTextBlockStyle}" Opacity="0.78" />
+            </StackPanel>
+
+            <Border Padding="22" CornerRadius="8" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1">
+                <StackPanel Spacing="16">
+                    <TextBlock Text="Biblioteca local" Style="{StaticResource SubtitleTextBlockStyle}" />
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Carpeta de datos" FontWeight="SemiBold" />
+                        <TextBlock Text="{x:Bind DataRoot}" TextWrapping="Wrap" FontFamily="Consolas" />
+                    </StackPanel>
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Archivo de perfiles" FontWeight="SemiBold" />
+                        <TextBlock Text="{x:Bind LibraryFilePath}" TextWrapping="Wrap" FontFamily="Consolas" />
+                    </StackPanel>
+                    <TextBlock Text="Se guardan nombres, direcciones, sala y evidencias de capacidades. Tervia no guarda contraseñas, tokens de emparejamiento ni credenciales en este archivo."
+                               TextWrapping="Wrap" MaxWidth="780" />
+                </StackPanel>
+            </Border>
+
+            <Border Padding="18" CornerRadius="8" Background="{ThemeResource ControlFillColorSecondaryBrush}">
+                <StackPanel Spacing="6">
+                    <TextBlock Text="Sin cuenta, nube ni telemetría" FontWeight="SemiBold" />
+                    <TextBlock Text="La búsqueda se limita a SSDP y mDNS en la red local. El sistema y las herramientas del fabricante pueden mostrar sus propios permisos o avisos de red."
+                               TextWrapping="Wrap" MaxWidth="780" />
+                </StackPanel>
+            </Border>
+
+            <TextBlock Opacity="0.72">
+                <TextBlock.Inlines>
+                    <Run Text="Versión " />
+                    <Run Text="{x:Bind AppVersion}" />
+                </TextBlock.Inlines>
+            </TextBlock>
+        </StackPanel>
+    </ScrollViewer>
+</Page>

@@ -9,11 +9,12 @@ on:
     - cron: "0 4 * * 1"
 
 permissions:
-  security-events: write
   contents: read
+  actions: read
+  security-events: write
 
 jobs:
-  analyze:
+  analyze-portable:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -23,5 +24,26 @@ jobs:
       - uses: github/codeql-action/init@v3
         with:
           languages: csharp
-      - run: dotnet build Tervia.sln -c Release
+      - run: dotnet build Tervia.Portable.slnf -c Release
       - uses: github/codeql-action/analyze@v3
+        with:
+          upload: ${{ github.event.repository.private == false && 'true' || 'never' }}
+
+  analyze-winui:
+    runs-on: windows-latest
+    permissions:
+      contents: read
+      actions: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - uses: github/codeql-action/init@v3
+        with:
+          languages: csharp
+      - run: dotnet build Tervia.sln -c Release -p:Platform=x64
+      - uses: github/codeql-action/analyze@v3
+        with:
+          upload: ${{ github.event.repository.private == false && 'true' || 'never' }}
