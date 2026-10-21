@@ -49,3 +49,11 @@ jobs:
       - name: Validate self-contained Windows publish
         shell: pwsh
         run: .\scripts\publish-windows.ps1 -OutputDirectory "$env:RUNNER_TEMP\tervia-publish"
+      - name: Upload Windows preview package
+        if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: Tervia-Windows-x64-preview-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/tervia-publish
+          if-no-files-found: error
+          retention-days: 7

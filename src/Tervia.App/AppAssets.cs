@@ -6,11 +6,7 @@ internal static class AppAssets
 {
     public static BitmapImage LoadBitmap(string fileName)
     {
-        var assemblyDirectory = Path.GetDirectoryName(typeof(App).Assembly.Location);
-        var assetDirectory = string.IsNullOrWhiteSpace(assemblyDirectory)
-            ? AppContext.BaseDirectory
-            : assemblyDirectory;
-        var assetPath = Path.Combine(assetDirectory, "Assets", fileName);
-        return new BitmapImage(new Uri(assetPath, UriKind.Absolute));
+        var assetUri = new Uri($"ms-appx:///Assets/{Uri.EscapeDataString(fileName)}");
+        return new BitmapImage(assetUri);
     }
 }

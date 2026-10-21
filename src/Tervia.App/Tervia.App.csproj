@@ -14,7 +14,9 @@
     <UseWinUI>true</UseWinUI>
     <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
     <WindowsPackageType>None</WindowsPackageType>
-    <EnableMsixTooling>false</EnableMsixTooling>
+    <EnableMsixTooling>true</EnableMsixTooling>
+    <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
+    <PublishSingleFile>true</PublishSingleFile>
     <TerviaHomeAndroidVariant Condition="'$(TerviaHomeAndroidVariant)' == ''">debug</TerviaHomeAndroidVariant>
   </PropertyGroup>
   <ItemGroup>
@@ -22,12 +24,15 @@
     <PackageReference Include="Microsoft.WindowsAppSDK" />
   </ItemGroup>
   <ItemGroup>
-    <Content Update="Assets\**\*" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <Content Update="Assets\**\*"
+             CopyToOutputDirectory="PreserveNewest"
+             CopyToPublishDirectory="PreserveNewest" />
     <Content Include="..\Tervia.Home.Android\app\build\outputs\apk\$(TerviaHomeAndroidVariant)\app-$(TerviaHomeAndroidVariant).apk"
              Condition="Exists('..\Tervia.Home.Android\app\build\outputs\apk\$(TerviaHomeAndroidVariant)\app-$(TerviaHomeAndroidVariant).apk')"
              Link="Tervia.Home.Android.apk"
              CopyToOutputDirectory="PreserveNewest"
-             CopyToPublishDirectory="PreserveNewest" />
+             CopyToPublishDirectory="PreserveNewest"
+             ExcludeFromSingleFile="true" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Tervia.Application\Tervia.Application.csproj" />
