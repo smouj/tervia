@@ -43,6 +43,7 @@ public static class MockTvFactory
         [
             CapabilityInfo.Supported(CapabilityId.RemoteNavigation, RiskLevel.Safe, "mock"),
             CapabilityInfo.Supported(CapabilityId.AppsList, RiskLevel.Safe, "mock"),
+            CapabilityInfo.Supported(CapabilityId.AppsLaunch, RiskLevel.Low, "mock"),
             CapabilityInfo.Supported(CapabilityId.DiagnosticsSystemInfo, RiskLevel.Safe, "mock"),
         ]),
         [new TvApplication { Id = "12", Name = "Netflix" }]);

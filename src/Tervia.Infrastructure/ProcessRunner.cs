@@ -19,6 +19,7 @@ public sealed record ProcessResult(
 /// </summary>
 public sealed class ProcessRunner
 {
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Instance shape allows substitution and decorators in tests.")]
     public async Task<ProcessResult> RunAsync(
         string fileName,
         IReadOnlyList<string> arguments,

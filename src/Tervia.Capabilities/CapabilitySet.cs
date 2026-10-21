@@ -22,7 +22,7 @@ public sealed class CapabilitySet
         return new CapabilitySet(builder.ToImmutable());
     }
 
-    public IReadOnlyCollection<CapabilityInfo> All => _items.Values;
+    public IReadOnlyCollection<CapabilityInfo> All => _items.Values.ToList();
 
     public CapabilityInfo? Find(CapabilityId id) => _items.TryGetValue(id, out var info) ? info : null;
 
