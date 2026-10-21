@@ -10,12 +10,15 @@ public sealed partial class DiscoveryPage : Page
 {
     public DiscoveryPage(DiscoveryViewModel viewModel)
     {
-        InitializeComponent();
         ViewModel = viewModel;
+        InitializeComponent();
         Unloaded += (_, _) => ViewModel.CancelScan();
     }
 
     public DiscoveryViewModel ViewModel { get; }
+
+    public void FocusManualAddress()
+        => ManualAddressBox.Focus(Microsoft.UI.Xaml.FocusState.Programmatic);
 
     private async void OnScanClick(object sender, RoutedEventArgs args)
         => await ViewModel.ScanAsync();

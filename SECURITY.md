@@ -27,4 +27,5 @@ Security-relevant areas:
 - Never store vendor account passwords or developer-account credentials.
 - Never weaken platform security (signing, DRM, certificate checks).
 - Never add a network service that accepts inbound connections.
-- Secrets that a platform requires are kept in Windows-protected storage.
+- The current alpha does not implement pairing or save pairing secrets. Any future
+  pairing support must use Windows-protected storage before it is exposed to users.

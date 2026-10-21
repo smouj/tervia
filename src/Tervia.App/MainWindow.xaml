@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:Microsoft.UI.Xaml.Controls"
     Title="Tervia">
-    <Grid>
+    <Grid RequestedTheme="Dark">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -19,7 +19,7 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-                    <Image Source="ms-appx:///Assets/logo-tervia-color.png" Width="34" Height="34"
+                    <Image x:Name="BrandLogo" Source="ms-appx:///Assets/logo-tervia-color.png" Width="34" Height="34"
                            Stretch="Uniform" AutomationProperties.Name="Logotipo de Tervia" />
                     <StackPanel Spacing="0" VerticalAlignment="Center">
                         <TextBlock Text="TERVIA" FontSize="16" FontWeight="SemiBold" />
@@ -49,22 +49,31 @@
         </Border>
 
         <controls:NavigationView x:Name="Navigation" Grid.Row="1"
-                                 PaneDisplayMode="LeftCompact"
+                                 PaneDisplayMode="Left"
                                  IsSettingsVisible="False"
                                  SelectionChanged="OnNavigationSelectionChanged"
                                  AutomationProperties.Name="Navegación principal">
+            <controls:NavigationView.Resources>
+                <SolidColorBrush x:Key="NavigationViewExpandedPaneBackground" Color="#081A3A" />
+                <SolidColorBrush x:Key="NavigationViewItemBackgroundSelected" Color="#173C70" />
+                <SolidColorBrush x:Key="NavigationViewItemBackgroundSelectedPointerOver" Color="#225081" />
+                <SolidColorBrush x:Key="NavigationViewItemBackgroundSelectedPressed" Color="#2D6092" />
+                <SolidColorBrush x:Key="NavigationViewItemForegroundSelected" Color="#FFFFFF" />
+                <SolidColorBrush x:Key="NavigationViewItemForegroundSelectedPointerOver" Color="#FFFFFF" />
+                <SolidColorBrush x:Key="NavigationViewItemForegroundSelectedPressed" Color="#FFFFFF" />
+            </controls:NavigationView.Resources>
             <controls:NavigationView.MenuItems>
-                <controls:NavigationViewItem Content="Resumen" Tag="dashboard">
-                    <controls:NavigationViewItem.Icon><SymbolIcon Symbol="Home" /></controls:NavigationViewItem.Icon>
+                <controls:NavigationViewItem Content="Inicio" Tag="dashboard">
+                    <controls:NavigationViewItem.Icon><FontIcon Glyph="&#xE80F;" FontFamily="Segoe MDL2 Assets" /></controls:NavigationViewItem.Icon>
                 </controls:NavigationViewItem>
                 <controls:NavigationViewItem Content="Mis televisores" Tag="devices">
-                    <controls:NavigationViewItem.Icon><SymbolIcon Symbol="View" /></controls:NavigationViewItem.Icon>
+                    <controls:NavigationViewItem.Icon><FontIcon Glyph="&#xE7F4;" FontFamily="Segoe MDL2 Assets" /></controls:NavigationViewItem.Icon>
                 </controls:NavigationViewItem>
                 <controls:NavigationViewItem Content="Descubrir" Tag="discovery">
-                    <controls:NavigationViewItem.Icon><SymbolIcon Symbol="Find" /></controls:NavigationViewItem.Icon>
+                    <controls:NavigationViewItem.Icon><FontIcon Glyph="&#xE721;" FontFamily="Segoe MDL2 Assets" /></controls:NavigationViewItem.Icon>
                 </controls:NavigationViewItem>
                 <controls:NavigationViewItem Content="Privacidad y datos" Tag="settings">
-                    <controls:NavigationViewItem.Icon><SymbolIcon Symbol="Setting" /></controls:NavigationViewItem.Icon>
+                    <controls:NavigationViewItem.Icon><FontIcon Glyph="&#xE713;" FontFamily="Segoe MDL2 Assets" /></controls:NavigationViewItem.Icon>
                 </controls:NavigationViewItem>
             </controls:NavigationView.MenuItems>
             <Frame x:Name="ContentFrame" />

@@ -11,7 +11,7 @@ on:
 permissions:
   contents: read
   actions: read
-  security-events: read
+  security-events: write
 
 jobs:
   analyze-portable:
@@ -27,15 +27,14 @@ jobs:
       - run: dotnet build Tervia.Portable.slnf -c Release
       - uses: github/codeql-action/analyze@v3
         with:
-          output: ${{ runner.temp }}/codeql-results
-          upload: never
+          upload: ${{ github.event.repository.private == false && 'true' || 'never' }}
 
   analyze-winui:
     runs-on: windows-latest
     permissions:
       contents: read
       actions: read
-      security-events: read
+      security-events: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v4
@@ -47,5 +46,4 @@ jobs:
       - run: dotnet build Tervia.sln -c Release -p:Platform=x64
       - uses: github/codeql-action/analyze@v3
         with:
-          output: ${{ runner.temp }}/codeql-results
-          upload: never
+          upload: ${{ github.event.repository.private == false && 'true' || 'never' }}

@@ -9,8 +9,8 @@ public sealed partial class DevicesPage : Page
 {
     public DevicesPage(DevicesViewModel viewModel)
     {
-        InitializeComponent();
         ViewModel = viewModel;
+        InitializeComponent();
         DeviceList.SelectedItem = ViewModel.Shell.SelectedDevice;
         ViewModel.Shell.Devices.CollectionChanged += (_, _) => RefreshDetails();
         ViewModel.Shell.PropertyChanged += (_, args) =>

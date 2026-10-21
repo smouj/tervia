@@ -21,7 +21,9 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                         <Button Content="Buscar en la red local" Click="OnScanClick" IsEnabled="{x:Bind ViewModel.CanScan, Mode=OneWay}"
-                                AutomationProperties.Name="Iniciar búsqueda local de televisores" />
+                                AutomationProperties.Name="Iniciar búsqueda local de televisores"
+                                Background="#25D5F2" Foreground="#07172F" BorderThickness="0"
+                                Padding="16,9" FontWeight="SemiBold" />
                         <Button Grid.Column="1" Content="Cancelar" Click="OnCancelClick" IsEnabled="{x:Bind ViewModel.IsScanning, Mode=OneWay}" />
                         <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="10" HorizontalAlignment="Right">
                             <ProgressRing IsActive="{x:Bind ViewModel.IsScanning, Mode=OneWay}" Width="20" Height="20" />
@@ -96,7 +98,9 @@
                         </Grid.ColumnDefinitions>
                         <TextBox x:Name="ManualAddressBox" PlaceholderText="192.168.1.50 o dirección IPv6"
                                  AutomationProperties.Name="Dirección IP local del televisor" />
-                        <Button Grid.Column="1" Content="Revisar y añadir" Click="OnAddManualClick" />
+                        <Button Grid.Column="1" Content="Revisar y añadir" Click="OnAddManualClick"
+                                Background="#25D5F2" Foreground="#07172F" BorderThickness="0"
+                                Padding="16,9" FontWeight="SemiBold" />
                     </Grid>
                 </StackPanel>
             </Border>

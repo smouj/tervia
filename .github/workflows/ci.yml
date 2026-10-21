@@ -37,3 +37,6 @@ jobs:
         run: dotnet build Tervia.sln -c Release -p:Platform=x64 --no-restore
       - name: Run test suite
         run: dotnet test Tervia.sln -c Release -p:Platform=x64 --no-build --no-restore
+      - name: Validate self-contained Windows publish
+        shell: pwsh
+        run: .\scripts\publish-windows.ps1 -OutputDirectory "$env:RUNNER_TEMP\tervia-publish"

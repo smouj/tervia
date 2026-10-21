@@ -1,5 +1,7 @@
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using Tervia.Capabilities;
+using Tervia.Core;
 
 namespace Tervia.App.ViewModels;
 
@@ -16,18 +18,34 @@ public sealed class DashboardViewModel : ViewModelBase
             {
                 Refresh();
             }
+            else if (args.PropertyName == nameof(ShellViewModel.HasDevices))
+            {
+                RefreshLibrarySummary();
+            }
             else if (args.PropertyName == nameof(ShellViewModel.ErrorMessage))
             {
                 OnPropertyChanged(nameof(LibraryError));
                 OnPropertyChanged(nameof(HasLibraryError));
             }
         };
+        _shell.Devices.CollectionChanged += OnDevicesCollectionChanged;
         Refresh();
     }
 
     public ObservableCollection<CapabilityInfo> Capabilities { get; } = [];
 
+    public ObservableCollection<TvDevice> Devices => _shell.Devices;
+
     public bool HasDevice => _shell.SelectedDevice is not null;
+
+    public bool HasDevices => _shell.HasDevices;
+
+    public int DeviceCount => Devices.Count;
+
+    public int OnlineCount => Devices.Count(item => item.Status == TvDeviceStatus.Online);
+
+    public int VerifiedCapabilitiesInLibrary => Devices.Sum(device => device.Capabilities.All.Count(
+        capability => capability.Status == CapabilityStatus.Supported));
 
     public string DeviceName => _shell.SelectedDevice?.FriendlyName ?? "Aún no hay televisores en la biblioteca";
 
@@ -56,6 +74,17 @@ public sealed class DashboardViewModel : ViewModelBase
     public int UnknownCount => Capabilities.Count(item => item.Status == CapabilityStatus.Unknown);
 
     public bool HasCapabilities => Capabilities.Count > 0;
+
+    private void OnDevicesCollectionChanged(object? sender, NotifyCollectionChangedEventArgs args)
+        => RefreshLibrarySummary();
+
+    private void RefreshLibrarySummary()
+    {
+        OnPropertyChanged(nameof(HasDevices));
+        OnPropertyChanged(nameof(DeviceCount));
+        OnPropertyChanged(nameof(OnlineCount));
+        OnPropertyChanged(nameof(VerifiedCapabilitiesInLibrary));
+    }
 
     private void Refresh()
     {

@@ -3,7 +3,9 @@
 ## Secrets
 
 - No vendor account passwords are stored, ever.
-- Pairing tokens required by a protocol are kept in Windows-protected storage.
+- Pairing is not implemented in the current alpha, and no pairing tokens are stored.
+- Any future pairing support must protect required tokens with Windows-protected
+  storage before those flows are exposed to users.
 - Remote keyboard text is not logged.
 
 ## Process execution
@@ -18,7 +20,8 @@ External tools run through `ProcessRunner`:
 ## Network
 
 - Discovery uses documented multicast protocols only.
-- No inbound listener is created.
+- No service accepts inbound connections; discovery only receives replies to its local
+  multicast queries.
 - No telemetry, no cloud endpoint, no Tervia domain.
 
 ## Destructive operations
