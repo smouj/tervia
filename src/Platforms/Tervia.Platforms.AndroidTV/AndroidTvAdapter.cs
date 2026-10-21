@@ -5,7 +5,7 @@ using Tervia.Infrastructure;
 
 namespace Tervia.Platforms.AndroidTV;
 
-public sealed class AndroidTvAdapter : ITvPlatformAdapter, ITvRemoteControl, ITvApplicationManager, ITvDiagnosticsProvider, ITvScreenshotProvider
+public sealed class AndroidTvAdapter : ITvPlatformAdapter, ITvRemoteControl, ITvApplicationManager, ITvDiagnosticsProvider, ITvScreenshotProvider, ITvHomeExperience
 {
     private static readonly Dictionary<TvRemoteKey, int> KeyCodes = new()
     {
@@ -107,6 +107,41 @@ public sealed class AndroidTvAdapter : ITvPlatformAdapter, ITvRemoteControl, ITv
         }
 
         return _adb.CaptureScreenshotAsync(session.Device.NetworkAddress, cancellationToken);
+    }
+
+    public Task InstallAsync(TvSession session, string packagePath, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(session);
+        if (!session.Connected)
+        {
+            throw new TvDisconnectedException(session.Device.Id);
+        }
+        return _adb.InstallPackageAsync(session.Device.NetworkAddress, packagePath, cancellationToken);
+    }
+
+    public Task ApplyProfileAsync(
+        TvSession session,
+        string profileBase64,
+        bool requestDefaultHomeRole,
+        CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(session);
+        if (!session.Connected)
+        {
+            throw new TvDisconnectedException(session.Device.Id);
+        }
+        return _adb.ApplyHomeProfileAsync(
+            session.Device.NetworkAddress, profileBase64, requestDefaultHomeRole, cancellationToken);
+    }
+
+    public Task OpenHomeSettingsAsync(TvSession session, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(session);
+        if (!session.Connected)
+        {
+            throw new TvDisconnectedException(session.Device.Id);
+        }
+        return _adb.OpenHomeSettingsAsync(session.Device.NetworkAddress, cancellationToken);
     }
 
     public async Task PressAsync(TvSession session, TvRemoteKey key, CancellationToken cancellationToken)

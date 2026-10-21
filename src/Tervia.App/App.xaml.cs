@@ -24,11 +24,12 @@ public partial class App : Microsoft.UI.Xaml.Application
         registrations.AddSingleton(_ => new TerviaPaths());
         registrations.AddSingleton<ProcessRunner>();
         registrations.AddSingleton<ITvDeviceLibrary, JsonTvDeviceLibrary>();
+        registrations.AddSingleton<ITvHomeProfileStore, JsonTvHomeProfileStore>();
         registrations.AddSingleton<ITvDiscoveryStrategy>(_ => new SsdpDiscoveryStrategy());
         registrations.AddSingleton<ITvDiscoveryStrategy>(_ => new MdnsDiscoveryStrategy());
         registrations.AddSingleton<TvDiscoveryService>();
         registrations.AddSingleton<AndroidTvAdapter>(services => new AndroidTvAdapter(
-            new AdbClient(services.GetRequiredService<ProcessRunner>())));
+            new AdbClient(services.GetRequiredService<ProcessRunner>(), AdbExecutableLocator.Resolve())));
         registrations.AddSingleton(services =>
         {
             var registry = new PlatformAdapterRegistry();
@@ -43,12 +44,15 @@ public partial class App : Microsoft.UI.Xaml.Application
         registrations.AddSingleton<TvOperationScheduler>();
         registrations.AddSingleton<TvScreenshotService>();
         registrations.AddSingleton<TvRemoteControlService>();
+        registrations.AddSingleton<TvHomeService>();
         registrations.AddSingleton<ShellViewModel>();
         registrations.AddSingleton<DashboardViewModel>();
         registrations.AddSingleton<DevicesViewModel>();
+        registrations.AddSingleton<HomeViewModel>();
         registrations.AddSingleton<DiscoveryViewModel>();
         registrations.AddTransient<DashboardPage>();
         registrations.AddTransient<DevicesPage>();
+        registrations.AddTransient<HomePage>();
         registrations.AddTransient<DiscoveryPage>();
         registrations.AddTransient<SettingsPage>();
         _services = registrations.BuildServiceProvider(new ServiceProviderOptions

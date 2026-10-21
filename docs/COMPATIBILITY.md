@@ -8,8 +8,8 @@ validados en hardware real todavía.
 
 | Plataforma | Pista o protocolo de descubrimiento | Adaptador en el código | Operaciones desde la interfaz | Hardware verificado |
 | --- | --- | --- | --- | --- |
-| Android TV / Google TV | SSDP y servicios Cast por mDNS | ADB con teclas básicas y captura PNG bajo demanda | Control direccional, OK, Atrás, Inicio, Menú y vista previa de captura en la biblioteca | Ninguno |
-| Fire TV | SSDP; puede sugerirse Android/Fire TV | Adaptador ADB para operaciones documentadas | Control y captura solo si ese modelo ofrece ADB, teclas compatibles y `screencap` | Ninguno |
+| Android TV / Google TV | SSDP y servicios Cast por mDNS | ADB con teclas, captura y Tervia Home | Tervia Home personaliza textos, tema, reloj, visibilidad y orden; la TV solicita confirmar el rol de inicio | Ninguno |
+| Fire TV integrado en TV | SSDP; puede sugerirse Android/Fire TV | Adaptador ADB para operaciones documentadas | Tervia Home, control y captura solo si ese modelo ofrece ADB, categorías Android y `screencap` compatibles | Ninguno |
 | Samsung Tizen | SSDP; pairing requiere configuración del televisor | Superficie restringida hasta pairing y pruebas | No disponible todavía | Ninguno |
 | LG webOS | SSDP; Developer Mode/pairing requiere configuración | Superficie restringida hasta pairing y pruebas | No disponible todavía | Ninguno |
 | Roku TV | SSDP; Roku ECP en el adaptador | Adaptador ECP para operaciones documentadas | No disponible todavía | Ninguno |
@@ -22,6 +22,13 @@ abre una conexión. Una captura solo se inicia después de pulsar el botón expl
 perfil Android/Google/Fire TV y requiere depuración ADB por red autorizada. Control
 remoto básico (direcciones, OK, Atrás, Inicio y Menú) está disponible para Android/
 Google/Fire TV; gestión de aplicaciones y diagnóstico en vivo siguen pendientes desde la interfaz.
+
+Tervia Home es un APK separado que se incluye con el paquete de Windows. Su instalación
+requiere ADB por red habilitado en la TV y la autorización del usuario en pantalla. Para
+convertirse en la pantalla predeterminada, Android presenta su selección/confirmación de
+launcher. La app conserva la pantalla original y no ejecuta comandos para desactivarla.
+El APK compila en CI, pero la interacción con el sistema y las aplicaciones sigue sin
+validarse en televisores físicos; la matriz no atribuye compatibilidad a modelos todavía.
 
 ## Significado de los estados de capacidad
 

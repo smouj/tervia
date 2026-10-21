@@ -5,7 +5,7 @@
     <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
     <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
     <RootNamespace>Tervia.App</RootNamespace>
-    <Version>0.1.0-alpha</Version>
+    <Version>0.2.0-alpha</Version>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <Platforms>x64</Platforms>
@@ -15,6 +15,7 @@
     <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
     <WindowsPackageType>None</WindowsPackageType>
     <EnableMsixTooling>false</EnableMsixTooling>
+    <TerviaHomeAndroidVariant Condition="'$(TerviaHomeAndroidVariant)' == ''">debug</TerviaHomeAndroidVariant>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
@@ -22,6 +23,11 @@
   </ItemGroup>
   <ItemGroup>
     <Content Update="Assets\**\*" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <Content Include="..\Tervia.Home.Android\app\build\outputs\apk\$(TerviaHomeAndroidVariant)\app-$(TerviaHomeAndroidVariant).apk"
+             Condition="Exists('..\Tervia.Home.Android\app\build\outputs\apk\$(TerviaHomeAndroidVariant)\app-$(TerviaHomeAndroidVariant).apk')"
+             Link="Tervia.Home.Android.apk"
+             CopyToOutputDirectory="PreserveNewest"
+             CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Tervia.Application\Tervia.Application.csproj" />

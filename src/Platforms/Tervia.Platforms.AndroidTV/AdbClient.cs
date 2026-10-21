@@ -140,6 +140,73 @@ public sealed class AdbClient
             .ConfigureAwait(false);
     }
 
+    public async Task InstallPackageAsync(string? serial, string packagePath, CancellationToken cancellationToken)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(packagePath);
+        if (!File.Exists(packagePath))
+        {
+            throw new FileNotFoundException("The Android package does not exist.", packagePath);
+        }
+
+        var result = await _runner.RunAsync(
+            _executable,
+            AdbCommandLine.ForDevice(Target(serial), "install", "-r", packagePath),
+            TimeSpan.FromMinutes(2),
+            cancellationToken).ConfigureAwait(false);
+
+        var detail = string.Concat(result.StandardOutput, " ", result.StandardError).Trim();
+        if (!result.Succeeded || !detail.Contains("Success", StringComparison.OrdinalIgnoreCase))
+        {
+            throw new PlatformToolFailureException(_executable, result.ExitCode,
+                string.IsNullOrWhiteSpace(detail) ? "ADB could not install the selected Android package." : detail);
+        }
+    }
+
+    public async Task ApplyHomeProfileAsync(
+        string? serial,
+        string profileBase64,
+        bool requestDefaultHomeRole,
+        CancellationToken cancellationToken)
+    {
+        if (string.IsNullOrWhiteSpace(profileBase64) || profileBase64.Length > 12_000 ||
+            profileBase64.Any(character => !(char.IsAsciiLetterOrDigit(character) || character is '+' or '/' or '=')))
+        {
+            throw new ArgumentException("The home profile is not valid Base64.", nameof(profileBase64));
+        }
+
+        var command = new List<string>
+        {
+            "am", "start", "-n", "com.tervia.home/.HomeActivity",
+            "-a", "com.tervia.home.APPLY_PROFILE",
+            "--es", "profileBase64", profileBase64,
+        };
+        if (requestDefaultHomeRole)
+        {
+            command.AddRange(["--ez", "requestHomeRole", "true"]);
+        }
+
+        var output = await ShellAsync(serial, command.ToArray(), cancellationToken).ConfigureAwait(false);
+        if (output.Contains("Error:", StringComparison.OrdinalIgnoreCase) ||
+            output.Contains("Error type", StringComparison.OrdinalIgnoreCase) ||
+            output.Contains("Exception", StringComparison.OrdinalIgnoreCase))
+        {
+            throw new PlatformToolFailureException(_executable, -1, output);
+        }
+    }
+
+    public async Task OpenHomeSettingsAsync(string? serial, CancellationToken cancellationToken)
+    {
+        var output = await ShellAsync(serial,
+            ["am", "start", "-n", "com.tervia.home/.HomeActivity", "--ez", "openHomeSettings", "true"],
+            cancellationToken).ConfigureAwait(false);
+        if (output.Contains("Error:", StringComparison.OrdinalIgnoreCase) ||
+            output.Contains("Error type", StringComparison.OrdinalIgnoreCase) ||
+            output.Contains("Exception", StringComparison.OrdinalIgnoreCase))
+        {
+            throw new PlatformToolFailureException(_executable, -1, output);
+        }
+    }
+
     public async Task<TvScreenshot> CaptureScreenshotAsync(string? serial, CancellationToken cancellationToken)
     {
         var target = Target(serial);

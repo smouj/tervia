@@ -52,6 +52,61 @@ public sealed class AdbClientTests
     }
 
     [Fact]
+    public async Task Install_uses_structured_arguments_and_requires_adb_success()
+    {
+        var apk = Path.Combine(Path.GetTempPath(), $"tervia-home-{Guid.NewGuid():N}.apk");
+        await File.WriteAllBytesAsync(apk, [1, 2, 3]);
+        try
+        {
+            var runner = new FakeProcessRunner
+            {
+                TextResult = (_, _) => Success("Performing Streamed Install\nSuccess"),
+            };
+            var adb = new AdbClient(runner, "fake-adb");
+
+            await adb.InstallPackageAsync("192.168.1.70:5555", apk, CancellationToken.None);
+
+            Assert.Collection(runner.TextCommands,
+                command => Assert.Equal(["-s", "192.168.1.70:5555", "install", "-r", apk], command));
+        }
+        finally
+        {
+            File.Delete(apk);
+        }
+    }
+
+    [Fact]
+    public async Task Home_profile_sync_only_passes_bounded_base64_and_role_request_flag()
+    {
+        var runner = new FakeProcessRunner
+        {
+            TextResult = (_, _) => Success("Starting: Intent { act=com.tervia.home.APPLY_PROFILE }"),
+        };
+        var adb = new AdbClient(runner, "fake-adb");
+        const string payload = "eyJ0aXRsZSI6Im1vY2siLCJ2ZXJzaW9uIjoxfQ==";
+
+        await adb.ApplyHomeProfileAsync("192.168.1.70:5555", payload, true, CancellationToken.None);
+
+        Assert.Collection(runner.TextCommands,
+            command => Assert.Equal(
+                ["-s", "192.168.1.70:5555", "shell", "am", "start", "-n", "com.tervia.home/.HomeActivity",
+                    "-a", "com.tervia.home.APPLY_PROFILE", "--es", "profileBase64", payload,
+                    "--ez", "requestHomeRole", "true"],
+                command));
+    }
+
+    [Fact]
+    public async Task Home_profile_sync_rejects_unbounded_or_shell_like_payloads()
+    {
+        var runner = new FakeProcessRunner();
+        var adb = new AdbClient(runner, "fake-adb");
+
+        await Assert.ThrowsAsync<ArgumentException>(() =>
+            adb.ApplyHomeProfileAsync("192.168.1.70", "not safe; adb shell rm -rf", false, CancellationToken.None));
+        Assert.Empty(runner.TextCommands);
+    }
+
+    [Fact]
     public async Task Screenshot_falls_back_to_pull_and_cleans_both_temporary_files()
     {
         var png = CreatePng();

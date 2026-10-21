@@ -1,51 +1,54 @@
-# Investigación: CleanYourTV
+# Fuentes de plataforma
 
-Referencia analizada: [Gathin23/cleanyourtv](https://github.com/Gathin23/cleanyourtv), en especial su [README](https://github.com/Gathin23/cleanyourtv/blob/main/README.md), [`PROMPT.md`](https://github.com/Gathin23/cleanyourtv/blob/main/PROMPT.md), [troubleshooting](https://github.com/Gathin23/cleanyourtv/blob/main/docs/TROUBLESHOOTING.md), sus notas por modelo en `docs/devices/` y sus listas comunitarias en `examples/`.
+Tervia implementa integraciones locales solo cuando existe una interfaz documentada y
+el televisor permite activarla. Esta página reúne la documentación oficial que guía las
+decisiones del proyecto. Reconocer un protocolo no demuestra que una función opere en
+un modelo concreto; los resultados físicos se anotan por modelo en
+[`COMPATIBILITY.md`](COMPATIBILITY.md).
 
-## Qué es y qué no es
+## Android TV, Google TV y Fire TV
 
-CleanYourTV se centra en Android TV y Google TV: diagnóstico ADB, cambios de paquetes
-reversibles y un launcher alternativo. Sus notas muestran casos concretos por modelo y
-firmware. No es una interfaz de control universal para Tizen, webOS, Roku o VIDAA; el
-launcher y las operaciones de limpieza no corresponden al alcance actual de Tervia.
+- [Android: declarar una app para TV](https://developer.android.com/training/tv/get-started/create): categorías de inicio, experiencia Leanback e iconos para televisor.
+- [Android: `RoleManager` y rol HOME](https://developer.android.com/reference/android/app/role/RoleManager): selección de la aplicación de inicio mediante el consentimiento del sistema.
+- [Android: categoría `HOME`](https://developer.android.com/reference/android/content/Intent#CATEGORY_HOME): contrato de una actividad de pantalla de inicio.
+- [Android Debug Bridge](https://developer.android.com/tools/adb): transporte de desarrollo que Tervia usa solo cuando el usuario inicia una operación.
+- [SDK Platform-Tools](https://developer.android.com/tools/releases/platform-tools): distribución oficial y documentación de ADB.
 
-Los documentos y scripts de ese proyecto contienen pasos destinados a modificar TVs
-reales. Aquí se leyeron como material de referencia; no se ejecutaron en ningún
-televisor. No se copiaron código, listas de paquetes, perfiles de modelos ni recursos.
-La licencia MIT del repo no convierte sus observaciones comunitarias en pruebas de
-compatibilidad de Tervia.
+Tervia Home declara los intent filters de `HOME` y `LEANBACK_LAUNCHER`. No desactiva,
+desinstala ni sustituye silenciosamente el launcher del fabricante. El usuario confirma
+la aplicación de inicio desde Android y puede volver a Ajustes para elegir el inicio
+original. La depuración por red debe configurarse y autorizarse en el propio televisor.
 
-## Prácticas que sí se incorporan
+## Samsung Tizen
 
-- **Evidencia específica del aparato.** Que un protocolo esté implementado no prueba
-  que una función funcione en un modelo. Tervia separa ahora confianza `Protocol` de
-  `Verified`; solo una captura válida solicitada en ese perfil se registra como
-  `Verified`.
-- **Conexión explícita.** Guardar un perfil continúa siendo local y silencioso. ADB se
-  invoca solo después de pulsar un botón de control o **Conectar y capturar**, usa el
-  puerto clásico 5555 y requiere que el usuario autorice el PC en la pantalla del
-  televisor.
-- **Captura real y limitada.** La interfaz obtiene un PNG bajo demanda, valida su
-  estructura y dimensiones, y lo previsualiza sin guardarlo en la biblioteca. Si `adb
-  exec-out` devuelve texto del firmware junto al PNG, intenta el método de archivo
-  temporal más `adb pull`; los dos temporales se limpian al terminar siempre que la
-  conexión lo permita.
-- **Límites visibles.** HDMI, Live TV, vídeo protegido, firmware y configuración pueden
-  impedir una captura. No se informa compatibilidad universal ni se crea un registro de
-  hardware sin probar el modelo físico.
+- [Samsung TV: conectar un televisor para desarrollo](https://developer.samsung.com/smarttv/develop/getting-started/using-sdk/tv-device.html)
+- [Samsung TV: guía de inicio rápido](https://developer.samsung.com/smarttv/develop/getting-started/quick-start-guide.html)
 
-## Qué se deja fuera de Tervia
+El modo de desarrollador y la firma de paquetes son requisitos del fabricante. Tervia no
+los omite ni declara pairing operativo hasta completar su flujo específico y las
+pruebas por modelo.
 
-Tervia no aplica listas de `pm disable-user`, no reemplaza el launcher, no modifica
-Private DNS, no desactiva paquetes ni toca servicios de fábrica. Esas acciones pueden
-romper funciones de un modelo específico y son ajenas a la función de captura. Las
-operaciones de ADB disponibles en adaptadores pero no expuestas por la interfaz tampoco
-se presentan como funciones del producto.
+## LG webOS
 
-## Limitación de ADB actual
+- [webOS TV CLI](https://webostv.developer.lge.com/develop/tools/cli-introduction)
 
-Tervia busca `adb.exe` en `PATH` y conecta a `<IP>:5555`. No implementa el flujo moderno
-de Android Wireless debugging que empareja por código/QR en un puerto temporal. Las TVs
-que solo admiten ese emparejamiento no pueden capturarse desde esta alpha. Consulta la
-[documentación Android de ADB](https://developer.android.com/tools/adb) y la guía oficial
-de [SDK Platform-Tools para Windows](https://developer.android.com/tools/releases/platform-tools).
+La herramienta oficial y el modo Developer se documentan aquí. El adaptador de Tervia
+seguirá mostrando la integración como restringida mientras no exista pairing probado.
+
+## Roku TV
+
+- [Roku External Control API](https://developer.roku.com/dev/docs/external-control-api)
+
+ECP es un control local en la LAN y requiere que las opciones del televisor lo permitan.
+Tervia no supone que cualquier Roku detectado sea un televisor Roku ni que acepte todas
+las operaciones.
+
+## Reglas de uso de estas fuentes
+
+- La documentación del fabricante define contratos y requisitos; no sustituye una
+  prueba en la TV real.
+- No ejecutar en televisores scripts de ejemplo que deshabiliten paquetes o cambien
+  ajustes sensibles.
+- No guardar credenciales de fabricante, eludir firmas, DRM ni modo desarrollador.
+- Registrar el modelo, firmware, función y fecha de cualquier verificación física sin
+  incluir datos personales ni secretos.

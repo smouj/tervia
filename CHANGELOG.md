@@ -7,6 +7,13 @@ project uses semantic versioning once the first release exists.
 
 ### Added
 
+- Android TV Home companion: a TV-first launcher with configurable title, subtitle,
+  accent theme, clock, app visibility and pinned-first ordering. The Windows shell can
+  install the APK and apply each TV's saved local profile.
+- The launcher requests Android's Home role/selection instead of disabling the
+  manufacturer launcher; users can return to Android's Home Settings to restore it.
+- Gradle Wrapper and Android API 36 build validation are being integrated into the
+  Windows package and CI. Physical TV compatibility remains unverified.
 - Android TV, Google TV and Fire TV profiles expose basic ADB remote keys and an
   on-demand screenshot preview. ADB behavior is exercised with a fake process runner;
   no physical TV has been validated.

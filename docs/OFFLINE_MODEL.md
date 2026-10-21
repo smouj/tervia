@@ -4,6 +4,7 @@ Tervia does not require Internet access for its own operation.
 
 Works without Internet, provided the television allows it:
 
+- Tervia Home profile editing and the saved Android launcher experience after installation
 - startup and local library
 - discovery on the local network
 - basic Android/Google/Fire TV remote keys over explicitly authorized ADB

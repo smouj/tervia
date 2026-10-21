@@ -122,7 +122,7 @@ public sealed partial class DevicesPage : Page
         }
         catch (PlatformToolMissingException)
         {
-            ShowCaptureError("No se encontró adb.exe. Instala Android SDK Platform-Tools y añade la carpeta platform-tools al PATH.");
+            ShowCaptureError("No se encontró adb.exe. Instala Android SDK Platform-Tools, comprueba su ubicación o añade platform-tools al PATH.");
         }
         catch (TvNotFoundException)
         {
@@ -182,7 +182,7 @@ public sealed partial class DevicesPage : Page
         }
         catch (PlatformToolMissingException)
         {
-            ShowCaptureError("No se encontró adb.exe. Instala Android SDK Platform-Tools y añade platform-tools al PATH.");
+            ShowCaptureError("No se encontró adb.exe. Instala Android SDK Platform-Tools, comprueba su ubicación o añade platform-tools al PATH.");
             RemoteStatus.Visibility = Visibility.Collapsed;
         }
         catch (TvNotFoundException)

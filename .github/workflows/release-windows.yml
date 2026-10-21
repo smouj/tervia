@@ -17,14 +17,34 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: microsoft
+          java-version: '17'
+          cache: gradle
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: 'platforms;android-36,build-tools;35.0.0'
+          accept-android-sdk-licenses: true
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 10.0.x
       - name: Publish self-contained app
         shell: pwsh
+        env:
+          TERVIA_HOME_KEYSTORE_BASE64: ${{ secrets.TERVIA_HOME_KEYSTORE_BASE64 }}
+          TERVIA_HOME_KEYSTORE_PASSWORD: ${{ secrets.TERVIA_HOME_KEYSTORE_PASSWORD }}
+          TERVIA_HOME_KEY_ALIAS: ${{ secrets.TERVIA_HOME_KEY_ALIAS }}
+          TERVIA_HOME_KEY_PASSWORD: ${{ secrets.TERVIA_HOME_KEY_PASSWORD }}
         run: |
+          if ([string]::IsNullOrWhiteSpace($env:TERVIA_HOME_KEYSTORE_BASE64)) {
+            throw 'Release is blocked until a private Android Home signing key is configured in repository Actions secrets.'
+          }
+          $keystorePath = Join-Path $env:RUNNER_TEMP 'tervia-home-release.jks'
+          [IO.File]::WriteAllBytes($keystorePath, [Convert]::FromBase64String($env:TERVIA_HOME_KEYSTORE_BASE64))
+          $env:TERVIA_HOME_KEYSTORE_PATH = $keystorePath
           $version = $env:GITHUB_REF_NAME -replace '^v', ''
-          .\scripts\publish-windows.ps1 -OutputDirectory (Join-Path $env:RUNNER_TEMP 'tervia-publish') -Version $version
+          .\scripts\publish-windows.ps1 -OutputDirectory (Join-Path $env:RUNNER_TEMP 'tervia-publish') -Version $version -HomeBuildVariant release
       - name: Create GitHub release
         shell: pwsh
         env:
@@ -43,7 +63,7 @@ jobs:
           @'
           Descarga y extrae `Tervia-win-x64.zip`; después abre `Tervia.exe` en Windows 10/11 x64.
 
-          Esta versión alpha ofrece el shell de escritorio, el descubrimiento local y la biblioteca de perfiles. El control remoto y la validación en televisores físicos siguen pendientes.
+          Tervia incluye una pantalla de inicio Android configurable desde Windows. En la TV, Android solicita confirmar el launcher predeterminado; la pantalla original se conserva y se puede restaurar desde Ajustes. La compatibilidad física depende del modelo y se documenta en el repositorio.
 
           Comprueba el SHA-256 con `SHA256SUMS.txt`. El ejecutable no tiene firma comercial y Windows SmartScreen puede mostrar un aviso.
           '@ | Set-Content -LiteralPath $notesFile -Encoding utf8NoBOM
