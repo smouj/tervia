@@ -25,6 +25,14 @@ dotnet build Tervia.Portable.slnf -c Release
 dotnet test Tervia.Portable.slnf -c Release
 ```
 
+## CodeQL
+
+CI runs CodeQL queries for both the portable projects and the Windows app. This
+private repository does not have GitHub Code Security enabled, so the workflow
+does not upload or retain its SARIF reports. A successful CodeQL check means the
+analysis completed; it does not mean the report contained no findings. Enable
+GitHub Code Security or run CodeQL locally when the SARIF results need review.
+
 ## Layout
 
 ```text
