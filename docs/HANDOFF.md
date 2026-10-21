@@ -11,7 +11,9 @@ Context for a coding agent continuing this repository.
 - The shell has an explicit Android/Google/Fire TV screenshot action in the local
   device library. It requires classic ADB over TCP port 5555, a TV that exposes
   `screencap`, and user authorization; the image is previewed and not saved.
-- Remote keys, app operations and live diagnostics are still not exposed in the UI.
+- Basic Android/Google/Fire TV remote keys (directional, OK, back, home, menu) are
+  exposed in the UI. Each press opens and closes an explicit ADB session.
+- App operations and live diagnostics are still not exposed in the UI.
 - No physical television has been validated; a successful screenshot marks only that
   saved device capability `Verified` and does not add a model-wide compatibility claim.
 - Tizen, webOS and VIDAA adapters currently publish capability sets only; their
@@ -30,8 +32,8 @@ Context for a coding agent continuing this repository.
 
 ## Next milestones
 
-- M7: complete fake-ADB integration coverage, modern Wireless debugging pairing, and
-  physical screenshot validation on recorded Android TV models.
+- M7: expand fake-ADB edge-case coverage, add modern Wireless debugging pairing, and
+  validate remote keys and screenshots on recorded Android TV models.
 - M8: Tizen pairing token flow and Developer Mode detection.
 - M9: webOS pairing and Developer Mode flow.
 - M10: Roku TV hardware validation and compatibility records.

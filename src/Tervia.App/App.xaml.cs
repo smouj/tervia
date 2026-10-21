@@ -40,7 +40,9 @@ public partial class App : Microsoft.UI.Xaml.Application
         });
         registrations.AddSingleton<TvSafetyEngine>(_ => new TvSafetyEngine([]));
         registrations.AddSingleton<TvSessionService>();
+        registrations.AddSingleton<TvOperationScheduler>();
         registrations.AddSingleton<TvScreenshotService>();
+        registrations.AddSingleton<TvRemoteControlService>();
         registrations.AddSingleton<ShellViewModel>();
         registrations.AddSingleton<DashboardViewModel>();
         registrations.AddSingleton<DevicesViewModel>();

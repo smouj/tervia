@@ -10,6 +10,8 @@ remoto de Tervia.
   dispositivos que respondan. No usa un servidor de Tervia.
 - El alta manual valida la sintaxis de una dirección IP, pero no intenta conectarse a
   esa dirección.
+- El control remoto solo conecta al pulsar una tecla en el perfil seleccionado. Cada
+  acción envía una tecla ADB y después Tervia intenta cerrar la conexión al televisor.
 - La captura de pantalla solo conecta tras la acción explícita **Conectar y capturar**
   y la confirmación ADB que el usuario acepte en la TV. El PNG se previsualiza en
   memoria, no se guarda en la biblioteca ni se envía a un servidor de Tervia. El método

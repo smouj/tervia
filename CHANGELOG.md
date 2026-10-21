@@ -7,6 +7,12 @@ project uses semantic versioning once the first release exists.
 
 ### Added
 
+- Android TV, Google TV and Fire TV profiles expose basic ADB remote keys and an
+  on-demand screenshot preview. ADB behavior is exercised with a fake process runner;
+  no physical TV has been validated.
+- The default Windows x64 WinUI build now includes .NET and Windows App SDK runtimes,
+  so running the built `Tervia.exe` does not prompt to install .NET separately.
+
 - Redesigned the Spanish-first WinUI home dashboard and added a direct path to manual
   IP entry.
 - Prepared an x64 self-contained single-file Windows download with SHA-256 on tagged

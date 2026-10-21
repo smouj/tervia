@@ -53,6 +53,44 @@
                 <TextBlock x:Name="SelectedDetails" TextWrapping="Wrap" Opacity="0.78" />
                 <TextBlock Text="Las capacidades permanecen sin verificar hasta ejecutar un flujo de identificación compatible. Guardar un perfil no inicia una conexión."
                            TextWrapping="Wrap" MaxWidth="620" />
+                <ContentControl x:Name="RemoteControlPanel">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="Control remoto" FontSize="17" FontWeight="SemiBold" />
+                        <TextBlock Text="Envía una tecla por ADB solo cuando la pulses. La depuración en red debe estar activada y autorizada en la TV."
+                                   TextWrapping="Wrap" Opacity="0.78" />
+                        <Grid ColumnSpacing="6" RowSpacing="6" HorizontalAlignment="Left">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="64" />
+                                <ColumnDefinition Width="64" />
+                                <ColumnDefinition Width="64" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="52" />
+                                <RowDefinition Height="52" />
+                                <RowDefinition Height="52" />
+                            </Grid.RowDefinitions>
+                            <Button Grid.Row="0" Grid.Column="1" Content="↑" Tag="Up" Click="OnRemoteKeyClick"
+                                    AutomationProperties.Name="Arriba" />
+                            <Button Grid.Row="1" Grid.Column="0" Content="←" Tag="Left" Click="OnRemoteKeyClick"
+                                    AutomationProperties.Name="Izquierda" />
+                            <Button Grid.Row="1" Grid.Column="1" Content="OK" Tag="Ok" Click="OnRemoteKeyClick"
+                                    AutomationProperties.Name="Aceptar" />
+                            <Button Grid.Row="1" Grid.Column="2" Content="→" Tag="Right" Click="OnRemoteKeyClick"
+                                    AutomationProperties.Name="Derecha" />
+                            <Button Grid.Row="2" Grid.Column="1" Content="↓" Tag="Down" Click="OnRemoteKeyClick"
+                                    AutomationProperties.Name="Abajo" />
+                        </Grid>
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <Button Content="Atrás" Tag="Back" Click="OnRemoteKeyClick" />
+                            <Button Content="Inicio" Tag="Home" Click="OnRemoteKeyClick" />
+                            <Button Content="Menú" Tag="Menu" Click="OnRemoteKeyClick" />
+                        </StackPanel>
+                        <ProgressRing x:Name="RemoteProgress" Width="22" Height="22" IsActive="False"
+                                      Visibility="Collapsed" HorizontalAlignment="Left" />
+                        <TextBlock x:Name="RemoteStatus" TextWrapping="Wrap" Opacity="0.78"
+                                   Visibility="Collapsed" />
+                    </StackPanel>
+                </ContentControl>
                 <StackPanel Spacing="8">
                     <TextBlock Text="Captura real de pantalla" FontSize="17" FontWeight="SemiBold" />
                     <TextBlock Text="Solo Android TV, Google TV y Fire TV con depuración ADB por red ya activada. Al capturar, Tervia se conecta a la dirección guardada; puede aparecer una solicitud de autorización en el televisor. La imagen no se añade a la biblioteca."

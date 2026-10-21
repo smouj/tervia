@@ -24,11 +24,27 @@ public sealed record BinaryProcessResult(
     public bool Succeeded => ExitCode == 0 && !TimedOut;
 }
 
+public interface IProcessRunner
+{
+    Task<ProcessResult> RunAsync(
+        string fileName,
+        IReadOnlyList<string> arguments,
+        TimeSpan timeout,
+        CancellationToken cancellationToken);
+
+    Task<BinaryProcessResult> RunBinaryAsync(
+        string fileName,
+        IReadOnlyList<string> arguments,
+        TimeSpan timeout,
+        int maximumStandardOutputBytes,
+        CancellationToken cancellationToken);
+}
+
 /// <summary>
 /// Runs external platform tools with structured arguments, no shell
 /// concatenation, a timeout and cancellation support.
 /// </summary>
-public sealed class ProcessRunner
+public sealed class ProcessRunner : IProcessRunner
 {
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Instance shape allows substitution and decorators in tests.")]
     public async Task<ProcessResult> RunAsync(

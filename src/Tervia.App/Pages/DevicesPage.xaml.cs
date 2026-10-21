@@ -10,6 +10,7 @@ namespace Tervia.App.Pages;
 public sealed partial class DevicesPage : Page
 {
     private string? _screenshotDeviceId;
+    private bool _operationInProgress;
 
     public DevicesPage(DevicesViewModel viewModel)
     {
@@ -36,6 +37,10 @@ public sealed partial class DevicesPage : Page
         {
             ViewModel.Shell.SelectedDevice = selected;
         }
+        ErrorText.Text = string.Empty;
+        ErrorText.Visibility = Visibility.Collapsed;
+        RemoteStatus.Text = string.Empty;
+        RemoteStatus.Visibility = Visibility.Collapsed;
         RefreshDetails();
     }
 
@@ -80,8 +85,8 @@ public sealed partial class DevicesPage : Page
             return;
         }
 
-        CaptureButton.IsEnabled = false;
-        DeviceList.IsEnabled = false;
+        _operationInProgress = true;
+        UpdateOperationAvailability();
         CaptureButton.Content = "Conectando…";
         CaptureProgress.IsActive = true;
         CaptureProgress.Visibility = Visibility.Visible;
@@ -137,11 +142,65 @@ public sealed partial class DevicesPage : Page
         }
         finally
         {
+            _operationInProgress = false;
             CaptureProgress.IsActive = false;
             CaptureProgress.Visibility = Visibility.Collapsed;
             CaptureButton.Content = "Conectar y capturar";
-            DeviceList.IsEnabled = true;
-            CaptureButton.IsEnabled = CanCapture(ViewModel.Shell.SelectedDevice?.Platform);
+            UpdateOperationAvailability();
+        }
+    }
+
+    private async void OnRemoteKeyClick(object sender, RoutedEventArgs args)
+    {
+        if (_operationInProgress ||
+            ViewModel.Shell.SelectedDevice is not { } selected ||
+            !CanControlRemote(selected.Platform) ||
+            sender is not Button { Tag: string keyName } ||
+            !Enum.TryParse<TvRemoteKey>(keyName, ignoreCase: true, out var key))
+        {
+            return;
+        }
+
+        _operationInProgress = true;
+        UpdateOperationAvailability();
+        ErrorText.Text = string.Empty;
+        ErrorText.Visibility = Visibility.Collapsed;
+        RemoteStatus.Text = $"Enviando {keyName.ToLowerInvariant()}…";
+        RemoteStatus.Visibility = Visibility.Visible;
+        RemoteProgress.IsActive = true;
+        RemoteProgress.Visibility = Visibility.Visible;
+
+        try
+        {
+            await ViewModel.PressRemoteKeyAsync(selected, key, CancellationToken.None);
+            RemoteStatus.Text = "Comando enviado. La respuesta depende de la TV y su firmware.";
+        }
+        catch (AuthenticationRequiredException exception)
+        {
+            ShowCaptureError(exception.Message);
+            RemoteStatus.Visibility = Visibility.Collapsed;
+        }
+        catch (PlatformToolMissingException)
+        {
+            ShowCaptureError("No se encontró adb.exe. Instala Android SDK Platform-Tools y añade platform-tools al PATH.");
+            RemoteStatus.Visibility = Visibility.Collapsed;
+        }
+        catch (TvNotFoundException)
+        {
+            ShowCaptureError("No se alcanzó la TV. Comprueba que esté encendida, en la misma red y con ADB por red activado.");
+            RemoteStatus.Visibility = Visibility.Collapsed;
+        }
+        catch (Exception)
+        {
+            ShowCaptureError("No se pudo enviar el comando. Comprueba la autorización ADB y vuelve a intentarlo.");
+            RemoteStatus.Visibility = Visibility.Collapsed;
+        }
+        finally
+        {
+            _operationInProgress = false;
+            RemoteProgress.IsActive = false;
+            RemoteProgress.Visibility = Visibility.Collapsed;
+            UpdateOperationAvailability();
         }
     }
 
@@ -153,6 +212,17 @@ public sealed partial class DevicesPage : Page
 
     private static bool CanCapture(TvPlatform? platform)
         => platform is TvPlatform.AndroidTV or TvPlatform.GoogleTV or TvPlatform.FireTV;
+
+    private static bool CanControlRemote(TvPlatform? platform)
+        => platform is TvPlatform.AndroidTV or TvPlatform.GoogleTV or TvPlatform.FireTV;
+
+    private void UpdateOperationAvailability()
+    {
+        var platform = ViewModel.Shell.SelectedDevice?.Platform;
+        DeviceList.IsEnabled = !_operationInProgress;
+        CaptureButton.IsEnabled = !_operationInProgress && CanCapture(platform);
+        RemoteControlPanel.IsEnabled = !_operationInProgress && CanControlRemote(platform);
+    }
 
     private static async Task<BitmapImage> DecodeScreenshotAsync(ReadOnlyMemory<byte> pngData)
     {
@@ -188,6 +258,7 @@ public sealed partial class DevicesPage : Page
             ? "Añade una TV física desde la sección Descubrir."
             : $"Plataforma: {selected.Platform}\nEstado: {selected.Status}\nFabricante/modelo: {selected.Manufacturer ?? "Sin confirmar"} / {selected.Model ?? "Sin confirmar"}\nSala: {selected.Room ?? "Sin asignar"}\nFunciones verificadas en este dispositivo: {selected.Capabilities.All.Count(capability => capability.Status == Tervia.Capabilities.CapabilityStatus.Supported && capability.Confidence == Tervia.Capabilities.CapabilityConfidence.Verified)}";
         RemoveButton.IsEnabled = selected is not null;
-        CaptureButton.IsEnabled = CanCapture(selected?.Platform);
+        RemoteControlPanel.Visibility = CanControlRemote(selected?.Platform) ? Visibility.Visible : Visibility.Collapsed;
+        UpdateOperationAvailability();
     }
 }

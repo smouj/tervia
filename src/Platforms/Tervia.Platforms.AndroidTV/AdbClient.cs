@@ -7,10 +7,10 @@ namespace Tervia.Platforms.AndroidTV;
 public sealed class AdbClient
 {
     private const int MaximumScreenshotBytes = 64 * 1024 * 1024;
-    private readonly ProcessRunner _runner;
+    private readonly IProcessRunner _runner;
     private readonly string _executable;
 
-    public AdbClient(ProcessRunner runner, string executable = "adb")
+    public AdbClient(IProcessRunner runner, string executable = "adb")
     {
         _runner = runner;
         _executable = executable;

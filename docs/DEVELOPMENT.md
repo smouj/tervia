@@ -17,6 +17,11 @@ dotnet build Tervia.sln -c Release -p:Platform=x64
 dotnet test Tervia.sln -c Release -p:Platform=x64
 ```
 
+The WinUI project targets Windows x64 and builds self-contained by default, including
+the .NET runtime and Windows App SDK. Run `Tervia.exe` from the RID-specific output
+folder and keep the neighboring runtime files together. Building still requires the
+.NET 10 SDK; the downloadable release ZIP is the simpler installation path.
+
 To validate the same self-contained Windows app that is included in the downloadable ZIP:
 
 ```powershell

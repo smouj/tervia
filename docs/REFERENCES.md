@@ -22,8 +22,9 @@ compatibilidad de Tervia.
   `Verified`; solo una captura válida solicitada en ese perfil se registra como
   `Verified`.
 - **Conexión explícita.** Guardar un perfil continúa siendo local y silencioso. ADB se
-  invoca solo después de pulsar **Conectar y capturar**, usa el puerto clásico 5555 y
-  requiere que el usuario autorice el PC en la pantalla del televisor.
+  invoca solo después de pulsar un botón de control o **Conectar y capturar**, usa el
+  puerto clásico 5555 y requiere que el usuario autorice el PC en la pantalla del
+  televisor.
 - **Captura real y limitada.** La interfaz obtiene un PNG bajo demanda, valida su
   estructura y dimensiones, y lo previsualiza sin guardarlo en la biblioteca. Si `adb
   exec-out` devuelve texto del firmware junto al PNG, intenta el método de archivo

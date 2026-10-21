@@ -26,10 +26,10 @@ Su objetivo es ayudarte a encontrar y organizar televisores físicos de tu red l
 mostrando con claridad qué se ha comprobado y qué sigue pendiente.
 
 > **Estado: alpha.** El inicio, la biblioteca local, el descubrimiento y el alta manual
-> forman parte del shell actual. La biblioteca permite solicitar una captura real de
-> pantalla en Android TV, Google TV y Fire TV con ADB por red. El control remoto, la
-> instalación o el lanzamiento de aplicaciones y los diagnósticos todavía no están
-> disponibles desde la interfaz. Ningún modelo se ha validado en hardware real.
+> forman parte del shell actual. Android TV, Google TV y Fire TV permiten enviar teclas
+> básicas y solicitar una captura real con ADB por red. La instalación o lanzamiento de
+> aplicaciones y los diagnósticos todavía no están disponibles desde la interfaz.
+> Ningún modelo se ha validado en hardware real.
 
 ## Así se ve la aplicación
 
@@ -87,6 +87,9 @@ Consulta [Seguridad](SECURITY.md) para informar de problemas.
   por ADB solo al pulsar **Conectar y capturar** y mostrar el PNG en esa ventana. Puede
   aparecer una solicitud de autorización en la pantalla de la TV. La imagen no se guarda
   en el perfil; HDMI, Live TV y vídeo protegido pueden impedir la captura.
+- **Control remoto básico:** enviar Arriba, Abajo, Izquierda, Derecha, OK, Atrás, Inicio
+  o Menú a un Android/Google/Fire TV desde su perfil. Cada tecla abre una conexión ADB
+  explícita; el modelo y firmware pueden variar en su respuesta.
 - **Privacidad:** consultar qué datos guarda Tervia y qué actividad de red realiza.
 
 Guardar una dirección **no** empareja, sondea ni controla el dispositivo. Una pista de
@@ -106,7 +109,8 @@ en hardware real todavía.
 | Descubrimiento local SSDP y mDNS | Implementado; resultado no equivale a compatibilidad verificada |
 | Alta manual y biblioteca local | Disponible; guardar no inicia una conexión |
 | Captura de pantalla bajo demanda por ADB | Implementada para Android/Google/Fire TV; pendiente de validación física por modelo |
-| Control remoto, gestión de apps y diagnósticos desde la interfaz | Pendiente |
+| Teclas básicas del control remoto por ADB | Implementadas para Android/Google/Fire TV; pendientes de validación física por modelo |
+| Gestión de apps y diagnósticos desde la interfaz | Pendiente |
 | Emparejamiento Tizen/webOS y pruebas físicas por modelo | Pendiente |
 | Captura de pantalla en Roku, Tizen, webOS y VIDAA | No disponible en esta alpha |
 
@@ -128,6 +132,8 @@ su marca o plataforma.
   clásico 5555; no implementa el emparejamiento Wireless debugging por código o QR.
   Tervia no almacena claves de ADB; desactiva la depuración en los ajustes del televisor
   al terminar. Consulta la [guía oficial de ADB](https://developer.android.com/tools/adb).
+- Cada tecla del control remoto abre y cierra una sesión ADB al pulsarla; no hay escucha
+  en segundo plano ni control automático.
 - Las capturas se muestran en memoria y se descartan al cambiar de televisor o cerrar la
   ventana. Si el modo directo no produce un PNG válido, se usan archivos temporales
   únicos en el PC y la TV; Tervia intenta borrarlos al terminar.
