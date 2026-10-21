@@ -26,3 +26,10 @@ actually allows.
 - **Restricted** — possible, but requires pairing, developer mode or vendor tooling.
 - **Unavailable** — the platform does not expose it.
 - **Unknown** — not verified; the UI must not offer it as if it worked.
+
+## Confidence
+
+- `Protocol` means the adapter implements the operation and its prerequisites were
+  observed, but no particular physical TV has been tested.
+- `Verified` is recorded for an individual saved TV only after the operation succeeds
+  there. It is not a blanket certification of that model, firmware family or brand.

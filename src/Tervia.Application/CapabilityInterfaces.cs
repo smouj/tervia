@@ -42,6 +42,11 @@ public interface ITvDiagnosticsProvider
     Task<IReadOnlyDictionary<string, string>> ReadDiagnosticsAsync(TvSession session, CancellationToken cancellationToken);
 }
 
+public interface ITvScreenshotProvider
+{
+    Task<TvScreenshot> CaptureScreenshotAsync(TvSession session, CancellationToken cancellationToken);
+}
+
 public interface ITvDisplayProvider
 {
     Task<IReadOnlyDictionary<string, string>> ReadDisplayAsync(TvSession session, CancellationToken cancellationToken);

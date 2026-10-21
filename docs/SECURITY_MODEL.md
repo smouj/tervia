@@ -23,6 +23,17 @@ External tools run through `ProcessRunner`:
 - No service accepts inbound connections; discovery only receives replies to its local
   multicast queries.
 - No telemetry, no cloud endpoint, no Tervia domain.
+- An explicit Android screenshot request opens a host-side ADB connection to the saved
+  address on port 5555. Tervia does not enable ADB or
+  pair a device. The TV may display an authorization prompt; only authorize a TV you own
+  or administer. Network ADB should be disabled again in the TV settings after use.
+- Tervia does not read or copy ADB credentials. The separately installed `adb` tool can
+  retain its own authorized host key under the Windows user profile; revoke that
+  workstation from the TV's developer settings if it should no longer be trusted.
+- A screenshot stays in process memory for preview. If `adb exec-out` does not return a
+  valid PNG, Tervia uses a GUID-named temporary file in `/data/local/tmp`, pulls it to a
+  GUID-named host temporary file, and attempts to delete both. The host temporary file is
+  deleted in a `finally` block; remote cleanup is best effort if the connection drops.
 
 ## Destructive operations
 

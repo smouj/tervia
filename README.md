@@ -26,15 +26,17 @@ Su objetivo es ayudarte a encontrar y organizar televisores físicos de tu red l
 mostrando con claridad qué se ha comprobado y qué sigue pendiente.
 
 > **Estado: alpha.** El inicio, la biblioteca local, el descubrimiento y el alta manual
-> forman parte del shell actual. El control remoto, la instalación o el lanzamiento de
-> aplicaciones y las capturas de pantalla de televisores todavía no están disponibles
-> desde la interfaz. La compatibilidad con hardware real aún no se ha validado.
+> forman parte del shell actual. La biblioteca permite solicitar una captura real de
+> pantalla en Android TV, Google TV y Fire TV con ADB por red. El control remoto, la
+> instalación o el lanzamiento de aplicaciones y los diagnósticos todavía no están
+> disponibles desde la interfaz. Ningún modelo se ha validado en hardware real.
 
 ## Así se ve la aplicación
 
 Estas imágenes se capturan de la aplicación Tervia ejecutándose en Windows. Son
 pantallas de la aplicación de escritorio; **no son capturas de una televisión**.
-La captura de pantalla de televisores físicos está pendiente de implementación.
+La captura real por ADB está disponible bajo demanda para TVs Android compatibles,
+pero todavía no hay modelos validados en hardware.
 
 | Inicio | Descubrimiento |
 | --- | --- |
@@ -61,6 +63,11 @@ Si Windows indica que falta el runtime de Visual C++, instala el
 [paquete x64 oficial de Microsoft](https://aka.ms/vc14/vc_redist.x64.exe) y vuelve a
 abrir Tervia.
 
+El ZIP de **Releases** ya incluye .NET y Windows App SDK. Si Windows te pide descargar
+.NET, confirma que extrajiste el ZIP completo y abriste `Tervia.exe` (no `Tervia.dll` ni
+una versión compilada desde el código). Para compilar Tervia desde el repositorio sí se
+necesita el SDK de .NET 10.
+
 La aplicación no está firmada con un certificado comercial; Windows SmartScreen puede
 mostrar un aviso. Comprueba el SHA-256 publicado junto al ZIP y continúa solo si
 confías en la descarga. En PowerShell puedes calcularlo con
@@ -76,6 +83,10 @@ Consulta [Seguridad](SECURITY.md) para informar de problemas.
   conexión ni resolver nombres DNS.
 - **Revisar y guardar:** confirmar que el resultado corresponde a un televisor físico
   antes de guardarlo en la biblioteca de este PC.
+- **Capturar pantalla:** desde el perfil de un Android TV, Google TV o Fire TV, conectar
+  por ADB solo al pulsar **Conectar y capturar** y mostrar el PNG en esa ventana. Puede
+  aparecer una solicitud de autorización en la pantalla de la TV. La imagen no se guarda
+  en el perfil; HDMI, Live TV y vídeo protegido pueden impedir la captura.
 - **Privacidad:** consultar qué datos guarda Tervia y qué actividad de red realiza.
 
 Guardar una dirección **no** empareja, sondea ni controla el dispositivo. Una pista de
@@ -94,9 +105,10 @@ en hardware real todavía.
 | Interfaz de escritorio WinUI 3 | Disponible en esta alpha |
 | Descubrimiento local SSDP y mDNS | Implementado; resultado no equivale a compatibilidad verificada |
 | Alta manual y biblioteca local | Disponible; guardar no inicia una conexión |
+| Captura de pantalla bajo demanda por ADB | Implementada para Android/Google/Fire TV; pendiente de validación física por modelo |
 | Control remoto, gestión de apps y diagnósticos desde la interfaz | Pendiente |
 | Emparejamiento Tizen/webOS y pruebas físicas por modelo | Pendiente |
-| Capturar la imagen que muestra la pantalla de una TV | Pendiente; las imágenes de arriba son del escritorio |
+| Captura de pantalla en Roku, Tizen, webOS y VIDAA | No disponible en esta alpha |
 
 Consulta [COMPATIBILITY.md](docs/COMPATIBILITY.md) para los estados por plataforma y
 los resultados de pruebas en hardware. Los estados actuales son `Unknown`, `Supported`,
@@ -110,6 +122,15 @@ su marca o plataforma.
 - Perfiles y datos locales en `%LOCALAPPDATA%\Tervia`.
 - La búsqueda consulta la red local mediante SSDP y mDNS. Añadir una IP manualmente no
   contacta ese dispositivo.
+- La captura solo inicia una conexión cuando la solicitas. Requiere `adb.exe` de
+  [Android SDK Platform-Tools](https://developer.android.com/tools/releases/platform-tools)
+  en `PATH` y depuración ADB por red habilitada en la TV. Actualmente usa el puerto
+  clásico 5555; no implementa el emparejamiento Wireless debugging por código o QR.
+  Tervia no almacena claves de ADB; desactiva la depuración en los ajustes del televisor
+  al terminar. Consulta la [guía oficial de ADB](https://developer.android.com/tools/adb).
+- Las capturas se muestran en memoria y se descartan al cambiar de televisor o cerrar la
+  ventana. Si el modo directo no produce un PNG válido, se usan archivos temporales
+  únicos en el PC y la TV; Tervia intenta borrarlos al terminar.
 - Las pistas de red no se tratan como identidad verificada.
 - Las operaciones sensibles deben pasar por el motor de seguridad y requerir
   confirmación cuando corresponda.
@@ -149,6 +170,7 @@ El flujo de CI compila también el shell WinUI en Windows. Más detalles en
 | [Privacidad](docs/PRIVACY.md) | Datos locales y actividad de red |
 | [Recuperación](docs/RECOVERY.md) | Snapshots y límites de restauración |
 | [Modo sin conexión](docs/OFFLINE_MODEL.md) | Funciones que no necesitan Internet |
+| [Investigación CleanYourTV](docs/REFERENCES.md) | Alcance de la referencia y prácticas adaptadas con seguridad |
 | [Desarrollo](docs/DEVELOPMENT.md) | Build, CI y milestones |
 | [Cambios](CHANGELOG.md) | Historial de versiones |
 

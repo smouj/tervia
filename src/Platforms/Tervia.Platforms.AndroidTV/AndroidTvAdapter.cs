@@ -5,7 +5,7 @@ using Tervia.Infrastructure;
 
 namespace Tervia.Platforms.AndroidTV;
 
-public sealed class AndroidTvAdapter : ITvPlatformAdapter, ITvRemoteControl, ITvApplicationManager, ITvDiagnosticsProvider
+public sealed class AndroidTvAdapter : ITvPlatformAdapter, ITvRemoteControl, ITvApplicationManager, ITvDiagnosticsProvider, ITvScreenshotProvider
 {
     private static readonly Dictionary<TvRemoteKey, int> KeyCodes = new()
     {
@@ -44,29 +44,27 @@ public sealed class AndroidTvAdapter : ITvPlatformAdapter, ITvRemoteControl, ITv
         });
     }
 
-    public Task<TvSession> ConnectAsync(TvDevice device, CancellationToken cancellationToken)
+    public async Task<TvSession> ConnectAsync(TvDevice device, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(device);
-        return Task.FromResult(new TvSession(device, this, device.Capabilities) { Connected = true });
+        await _adb.ConnectAsync(device.NetworkAddress, cancellationToken).ConfigureAwait(false);
+        return new TvSession(device, this, device.Capabilities) { Connected = true };
     }
 
-    public Task DisconnectAsync(TvSession session, CancellationToken cancellationToken)
+    public async Task DisconnectAsync(TvSession session, CancellationToken cancellationToken)
     {
-        if (session is not null)
+        if (session is not null && session.Connected)
         {
             session.Connected = false;
+            await _adb.DisconnectAsync(session.Device.NetworkAddress, cancellationToken).ConfigureAwait(false);
         }
-        return Task.CompletedTask;
     }
 
     public async Task<CapabilitySet> ProbeCapabilitiesAsync(TvDevice device, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(device);
 
-        var available = await _adb.IsAvailableAsync(cancellationToken).ConfigureAwait(false);
-        var source = "adb";
-
-        if (!available)
+        if (!await _adb.IsAvailableAsync(cancellationToken).ConfigureAwait(false))
         {
             return CapabilitySet.From(
             [
@@ -77,6 +75,13 @@ public sealed class AndroidTvAdapter : ITvPlatformAdapter, ITvRemoteControl, ITv
             ]);
         }
 
+        // A capability probe follows an explicit connection request. Read-only
+        // queries confirm that this device is authorized and the shell responds;
+        // actions such as screenshots remain unverified until the user requests them.
+        var source = "adb protocol";
+        _ = await _adb.GetPropertyAsync(device.NetworkAddress, "ro.product.model", cancellationToken).ConfigureAwait(false);
+        _ = await _adb.ShellAsync(device.NetworkAddress, ["pm", "list", "packages", "-3"], cancellationToken).ConfigureAwait(false);
+
         return CapabilitySet.From(
         [
             CapabilityInfo.Supported(CapabilityId.RemoteNavigation, RiskLevel.Safe, source),
@@ -86,11 +91,22 @@ public sealed class AndroidTvAdapter : ITvPlatformAdapter, ITvRemoteControl, ITv
             CapabilityInfo.Supported(CapabilityId.AppsLaunch, RiskLevel.Low, source),
             CapabilityInfo.Supported(CapabilityId.AppsStop, RiskLevel.Medium, source),
             CapabilityInfo.Supported(CapabilityId.DiagnosticsSystemInfo, RiskLevel.Safe, source),
-            CapabilityInfo.Supported(CapabilityId.DeveloperScreenshot, RiskLevel.Safe, source),
             CapabilityInfo.Supported(CapabilityId.DeveloperShell, RiskLevel.High, source),
             CapabilityInfo.Supported(CapabilityId.MaintenanceListPackages, RiskLevel.Low, source),
+            CapabilityInfo.Unknown(CapabilityId.DeveloperScreenshot, "requires an explicit capture request on this television"),
             CapabilityInfo.Restricted(CapabilityId.AppsInstall, "requires developer options and adb authorization", RiskLevel.High),
         ]);
+    }
+
+    public Task<TvScreenshot> CaptureScreenshotAsync(TvSession session, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(session);
+        if (!session.Connected)
+        {
+            throw new TvDisconnectedException(session.Device.Id);
+        }
+
+        return _adb.CaptureScreenshotAsync(session.Device.NetworkAddress, cancellationToken);
     }
 
     public async Task PressAsync(TvSession session, TvRemoteKey key, CancellationToken cancellationToken)

@@ -6,11 +6,12 @@ Works without Internet, provided the television allows it:
 
 - startup and local library
 - discovery on the local network
-- connection to previously paired TVs
-- remote control, volume, inputs
-- local diagnostics and logs
-- Android ADB operations
-- snapshot and recovery
+- on-demand Android TV screenshots, if ADB Platform-Tools is installed and classic
+  network debugging on port 5555 is enabled and authorized on the TV
+
+Remote control, volume, inputs, diagnostics, package management, snapshots and recovery
+are not available from the current desktop UI, even where an adapter implementation
+exists.
 
 Vendor dependencies (documented, not hidden):
 

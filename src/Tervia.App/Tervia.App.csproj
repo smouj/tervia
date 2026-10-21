@@ -27,5 +27,7 @@
     <ProjectReference Include="..\Tervia.Capabilities\Tervia.Capabilities.csproj" />
     <ProjectReference Include="..\Tervia.Discovery\Tervia.Discovery.csproj" />
     <ProjectReference Include="..\Tervia.Infrastructure\Tervia.Infrastructure.csproj" />
+    <ProjectReference Include="..\Tervia.Safety\Tervia.Safety.csproj" />
+    <ProjectReference Include="..\Platforms\Tervia.Platforms.AndroidTV\Tervia.Platforms.AndroidTV.csproj" />
   </ItemGroup>
 </Project>

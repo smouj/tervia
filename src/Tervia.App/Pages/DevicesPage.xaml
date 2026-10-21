@@ -39,7 +39,8 @@
                        Visibility="{x:Bind ViewModel.Shell.HasDevices, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
         </Grid>
 
-        <Border Grid.Column="1" Grid.Row="1" Padding="22" CornerRadius="8"
+        <ScrollViewer Grid.Column="1" Grid.Row="1" VerticalScrollBarVisibility="Auto">
+        <Border Padding="22" CornerRadius="8"
                 Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                 BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1">
             <StackPanel Spacing="16">
@@ -52,11 +53,29 @@
                 <TextBlock x:Name="SelectedDetails" TextWrapping="Wrap" Opacity="0.78" />
                 <TextBlock Text="Las capacidades permanecen sin verificar hasta ejecutar un flujo de identificación compatible. Guardar un perfil no inicia una conexión."
                            TextWrapping="Wrap" MaxWidth="620" />
+                <StackPanel Spacing="8">
+                    <TextBlock Text="Captura real de pantalla" FontSize="17" FontWeight="SemiBold" />
+                    <TextBlock Text="Solo Android TV, Google TV y Fire TV con depuración ADB por red ya activada. Al capturar, Tervia se conecta a la dirección guardada; puede aparecer una solicitud de autorización en el televisor. La imagen no se añade a la biblioteca."
+                               TextWrapping="Wrap" Opacity="0.78" />
+                    <Button x:Name="CaptureButton" Content="Conectar y capturar" Click="OnCaptureClick"
+                            HorizontalAlignment="Left" IsEnabled="False" />
+                    <ProgressRing x:Name="CaptureProgress" Width="24" Height="24" IsActive="False"
+                                  Visibility="Collapsed" HorizontalAlignment="Left" />
+                    <TextBlock x:Name="ScreenshotInfo" TextWrapping="Wrap" Opacity="0.72"
+                               Visibility="Collapsed" />
+                    <Border x:Name="ScreenshotFrame" Padding="8" CornerRadius="8"
+                            Background="{ThemeResource ControlFillColorSecondaryBrush}"
+                            Visibility="Collapsed">
+                        <Image x:Name="ScreenshotImage" MaxHeight="360" MaxWidth="660"
+                               Stretch="Uniform" AutomationProperties.Name="Captura de la pantalla actual del televisor" />
+                    </Border>
+                </StackPanel>
                 <Button x:Name="RemoveButton" Content="Quitar de la biblioteca" Click="OnRemoveClick"
                         HorizontalAlignment="Left" IsEnabled="False" />
                 <TextBlock x:Name="ErrorText" Foreground="{ThemeResource SystemFillColorCriticalBrush}"
                            TextWrapping="Wrap" Visibility="Collapsed" />
             </StackPanel>
         </Border>
+        </ScrollViewer>
     </Grid>
 </Page>
