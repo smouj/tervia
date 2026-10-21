@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
+using Tervia.Application;
 using Tervia.App.Pages;
 using Tervia.App.ViewModels;
 using Tervia.Discovery;
