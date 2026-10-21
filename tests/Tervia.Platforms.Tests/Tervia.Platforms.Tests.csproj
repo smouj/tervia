@@ -8,6 +8,7 @@
     <PackageReference Include="xunit.runner.visualstudio" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Tervia.Infrastructure\Tervia.Infrastructure.csproj" />
     <ProjectReference Include="..\..\src/Platforms/Tervia.Platforms.AndroidTV/Tervia.Platforms.AndroidTV.csproj" />
     <ProjectReference Include="..\..\src/Tervia.Core/Tervia.Core.csproj" />
   </ItemGroup>

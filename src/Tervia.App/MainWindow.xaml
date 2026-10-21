@@ -66,6 +66,9 @@
                 <controls:NavigationViewItem Content="Inicio" Tag="dashboard">
                     <controls:NavigationViewItem.Icon><FontIcon Glyph="&#xE80F;" FontFamily="Segoe MDL2 Assets" /></controls:NavigationViewItem.Icon>
                 </controls:NavigationViewItem>
+                <controls:NavigationViewItem Content="Inicio de TV" Tag="home">
+                    <controls:NavigationViewItem.Icon><FontIcon Glyph="&#xE7F4;" FontFamily="Segoe MDL2 Assets" /></controls:NavigationViewItem.Icon>
+                </controls:NavigationViewItem>
                 <controls:NavigationViewItem Content="Mis televisores" Tag="devices">
                     <controls:NavigationViewItem.Icon><FontIcon Glyph="&#xE7F4;" FontFamily="Segoe MDL2 Assets" /></controls:NavigationViewItem.Icon>
                 </controls:NavigationViewItem>

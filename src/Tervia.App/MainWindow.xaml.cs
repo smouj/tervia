@@ -39,6 +39,7 @@ public sealed partial class MainWindow : Window
         ContentFrame.Content = route switch
         {
             "dashboard" => CreateDashboardPage(),
+            "home" => _services.GetRequiredService<HomePage>(),
             "devices" => _services.GetRequiredService<DevicesPage>(),
             "discovery" => _services.GetRequiredService<DiscoveryPage>(),
             "settings" => _services.GetRequiredService<SettingsPage>(),

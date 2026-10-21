@@ -21,9 +21,24 @@ public sealed class TvSessionService
         ArgumentNullException.ThrowIfNull(device);
         var adapter = _registry.Require(device.Platform);
         var session = await adapter.ConnectAsync(device, cancellationToken).ConfigureAwait(false);
-        var capabilities = await adapter.ProbeCapabilitiesAsync(device, cancellationToken).ConfigureAwait(false);
-        session.Connected = true;
-        return new TvSession(device, adapter, capabilities);
+        try
+        {
+            var capabilities = await adapter.ProbeCapabilitiesAsync(device, cancellationToken).ConfigureAwait(false);
+            return new TvSession(device, adapter, capabilities) { Connected = true };
+        }
+        catch
+        {
+            try
+            {
+                await adapter.DisconnectAsync(session, CancellationToken.None).ConfigureAwait(false);
+            }
+            catch
+            {
+                // Keep the probe error as the actionable failure.
+            }
+
+            throw;
+        }
     }
 
     public SafetyDecision Authorize(SafetyRequest request) => _safety.Evaluate(request);

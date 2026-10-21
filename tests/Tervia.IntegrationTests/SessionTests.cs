@@ -61,6 +61,78 @@ public sealed class SessionTests
     }
 
     [Fact]
+    public async Task Successful_screenshot_marks_only_that_device_capability_verified()
+    {
+        var adapter = new ScreenshotTestAdapter();
+        var registry = new PlatformAdapterRegistry();
+        registry.Register(adapter);
+        var sessionService = new TvSessionService(registry, new TvSafetyEngine([]));
+        var screenshotService = new TvScreenshotService(sessionService);
+        var device = new TvDevice
+        {
+            Id = "192.168.1.42",
+            FriendlyName = "Living room TV",
+            NetworkAddress = "192.168.1.42",
+            Platform = TvPlatform.AndroidTV,
+        };
+
+        var capture = await screenshotService.CaptureAsync(device, CancellationToken.None);
+
+        Assert.Equal(1920, capture.Screenshot.Width);
+        Assert.Equal(CapabilityStatus.Supported, capture.Capabilities.Find(CapabilityId.DeveloperScreenshot)?.Status);
+        Assert.Equal(CapabilityConfidence.Verified, capture.Capabilities.Find(CapabilityId.DeveloperScreenshot)?.Confidence);
+        Assert.Equal(CapabilityStatus.Unknown, device.Capabilities.Find(CapabilityId.DeveloperScreenshot)?.Status ?? CapabilityStatus.Unknown);
+        Assert.Equal(1, adapter.DisconnectCalls);
+    }
+
+    [Fact]
+    public async Task Remote_control_sends_supported_key_and_disconnects_the_session()
+    {
+        var adapter = new RemoteTestAdapter(includeNavigation: true);
+        var registry = new PlatformAdapterRegistry();
+        registry.Register(adapter);
+        var sessions = new TvSessionService(registry, new TvSafetyEngine([]));
+        using var scheduler = new TvOperationScheduler();
+        var remote = new TvRemoteControlService(sessions, scheduler);
+        var device = new TvDevice
+        {
+            Id = "android-tv",
+            FriendlyName = "Android TV",
+            NetworkAddress = "192.168.1.43",
+            Platform = TvPlatform.AndroidTV,
+        };
+
+        await remote.PressAsync(device, TvRemoteKey.Up, CancellationToken.None);
+
+        Assert.Equal(new[] { TvRemoteKey.Up }, adapter.PressedKeys);
+        Assert.Equal(1, adapter.DisconnectCalls);
+    }
+
+    [Fact]
+    public async Task Remote_control_refuses_keys_without_a_probed_capability()
+    {
+        var adapter = new RemoteTestAdapter(includeNavigation: false);
+        var registry = new PlatformAdapterRegistry();
+        registry.Register(adapter);
+        var sessions = new TvSessionService(registry, new TvSafetyEngine([]));
+        using var scheduler = new TvOperationScheduler();
+        var remote = new TvRemoteControlService(sessions, scheduler);
+        var device = new TvDevice
+        {
+            Id = "android-tv",
+            FriendlyName = "Android TV",
+            NetworkAddress = "192.168.1.43",
+            Platform = TvPlatform.AndroidTV,
+        };
+
+        await Assert.ThrowsAsync<UnsupportedCapabilityException>(
+            () => remote.PressAsync(device, TvRemoteKey.Up, CancellationToken.None));
+
+        Assert.Empty(adapter.PressedKeys);
+        Assert.Equal(1, adapter.DisconnectCalls);
+    }
+
+    [Fact]
     public async Task Operation_queue_serialises_the_same_television()
     {
         using var queue = new TvOperationScheduler();
@@ -97,5 +169,72 @@ public sealed class SessionTests
         });
 
         Assert.Equal(SafetyOutcome.RequiresConfirmation, decision.Outcome);
+    }
+
+    private sealed class ScreenshotTestAdapter : ITvPlatformAdapter, ITvScreenshotProvider
+    {
+        public int DisconnectCalls { get; private set; }
+
+        public TvPlatform Platform => TvPlatform.AndroidTV;
+
+        public Task<TvDevice> IdentifyAsync(TvCandidate candidate, CancellationToken cancellationToken)
+            => throw new NotSupportedException();
+
+        public Task<TvSession> ConnectAsync(TvDevice device, CancellationToken cancellationToken)
+            => Task.FromResult(new TvSession(device, this, device.Capabilities) { Connected = true });
+
+        public Task DisconnectAsync(TvSession session, CancellationToken cancellationToken)
+        {
+            DisconnectCalls++;
+            session.Connected = false;
+            return Task.CompletedTask;
+        }
+
+        public Task<CapabilitySet> ProbeCapabilitiesAsync(TvDevice device, CancellationToken cancellationToken)
+            => Task.FromResult(CapabilitySet.From(
+            [CapabilityInfo.Unknown(CapabilityId.DeveloperScreenshot, "not attempted yet")]));
+
+        public Task<TvScreenshot> CaptureScreenshotAsync(TvSession session, CancellationToken cancellationToken)
+            => Task.FromResult(new TvScreenshot
+            {
+                PngData = new byte[] { 137, 80, 78, 71 },
+                Width = 1920,
+                Height = 1080,
+                CapturedAt = DateTimeOffset.UtcNow,
+            });
+    }
+
+    private sealed class RemoteTestAdapter(bool includeNavigation) : ITvPlatformAdapter, ITvRemoteControl
+    {
+        public List<TvRemoteKey> PressedKeys { get; } = [];
+        public int DisconnectCalls { get; private set; }
+        public TvPlatform Platform => TvPlatform.AndroidTV;
+
+        public Task<TvDevice> IdentifyAsync(TvCandidate candidate, CancellationToken cancellationToken)
+            => throw new NotSupportedException();
+
+        public Task<TvSession> ConnectAsync(TvDevice device, CancellationToken cancellationToken)
+            => Task.FromResult(new TvSession(device, this, device.Capabilities) { Connected = true });
+
+        public Task DisconnectAsync(TvSession session, CancellationToken cancellationToken)
+        {
+            DisconnectCalls++;
+            session.Connected = false;
+            return Task.CompletedTask;
+        }
+
+        public Task<CapabilitySet> ProbeCapabilitiesAsync(TvDevice device, CancellationToken cancellationToken)
+        {
+            var capability = includeNavigation
+                ? CapabilityInfo.Supported(CapabilityId.RemoteNavigation)
+                : CapabilityInfo.Unknown(CapabilityId.RemoteNavigation, "not probed");
+            return Task.FromResult(CapabilitySet.From([capability]));
+        }
+
+        public Task PressAsync(TvSession session, TvRemoteKey key, CancellationToken cancellationToken)
+        {
+            PressedKeys.Add(key);
+            return Task.CompletedTask;
+        }
     }
 }

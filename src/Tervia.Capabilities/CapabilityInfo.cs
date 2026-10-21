@@ -12,8 +12,12 @@ public sealed record CapabilityInfo
 
     public bool IsUsable => Status == CapabilityStatus.Supported;
 
-    public static CapabilityInfo Supported(CapabilityId id, RiskLevel risk = RiskLevel.Safe, string? source = null)
-        => new() { Id = id, Status = CapabilityStatus.Supported, Risk = risk, Source = source };
+    public static CapabilityInfo Supported(
+        CapabilityId id,
+        RiskLevel risk = RiskLevel.Safe,
+        string? source = null,
+        CapabilityConfidence confidence = CapabilityConfidence.Protocol)
+        => new() { Id = id, Status = CapabilityStatus.Supported, Risk = risk, Source = source, Confidence = confidence };
 
     public static CapabilityInfo Restricted(CapabilityId id, string reason, RiskLevel risk = RiskLevel.Medium)
         => new() { Id = id, Status = CapabilityStatus.Restricted, Reason = reason, Risk = risk };

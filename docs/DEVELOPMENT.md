@@ -5,6 +5,7 @@
 - .NET 10 SDK
 - Windows 10 1809+ or Windows 11 for the desktop shell
 - Visual C++ Redistributable x64 on machines that do not already have it
+- Java 17 and Android SDK API 36/build tools to build Tervia Home
 - optional: platform tools (`adb`, Tizen CLI, webOS CLI) for real hardware
 
 ## Build and test
@@ -17,11 +18,29 @@ dotnet build Tervia.sln -c Release -p:Platform=x64
 dotnet test Tervia.sln -c Release -p:Platform=x64
 ```
 
+The WinUI project targets Windows x64 and builds self-contained by default, including
+the .NET runtime and Windows App SDK. Run `Tervia.exe` from the RID-specific output
+folder and keep the neighboring runtime files together. Building still requires the
+.NET 10 SDK; the downloadable release ZIP is the simpler installation path.
+
 To validate the same self-contained Windows app that is included in the downloadable ZIP:
 
 ```powershell
 .\scripts\publish-windows.ps1
 ```
+
+The publish script builds `src/Tervia.Home.Android` first and places its APK beside the
+Windows app. The repository includes the Gradle Wrapper, so a global Gradle install is
+not needed. Android build signing uses the normal per-user debug key by default. For a
+public release APK, provide a long-lived private Android keystore through the four
+`TERVIA_HOME_*` environment variables; keep it out of Git and back it up securely. The
+GitHub release workflow expects those values in Actions secrets and intentionally stops
+if they are absent, because release APK updates must keep the same signing identity.
+
+For TV use, install Android SDK Platform-Tools. Tervia checks `ANDROID_SDK_ROOT`,
+`ANDROID_HOME`, the standard local SDK folder and then `PATH`. Platform-Tools is not
+redistributed in the ZIP; Tervia does not download it or change the computer's global
+environment.
 
 The output goes to `artifacts/publish/win-x64/Tervia.exe`. Publishing a `v*` tag
 builds the x64 app, places it and its runtime files in `Tervia-win-x64.zip`, calculates

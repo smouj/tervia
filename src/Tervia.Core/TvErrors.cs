@@ -23,7 +23,10 @@ public sealed class PairingRequiredException : TerviaException
 
 public sealed class AuthenticationRequiredException : TerviaException
 {
-    public AuthenticationRequiredException(string platform) : base($"{platform} requires authentication before this operation.") { }
+    public AuthenticationRequiredException(string platform, string? details = null)
+        : base(string.IsNullOrWhiteSpace(details)
+            ? $"{platform} requires authentication before this operation."
+            : $"{platform}: {details}") { }
 }
 
 public sealed class DeveloperModeRequiredException : TerviaException

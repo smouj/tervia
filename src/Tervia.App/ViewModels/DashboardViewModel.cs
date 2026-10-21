@@ -45,7 +45,7 @@ public sealed class DashboardViewModel : ViewModelBase
     public int OnlineCount => Devices.Count(item => item.Status == TvDeviceStatus.Online);
 
     public int VerifiedCapabilitiesInLibrary => Devices.Sum(device => device.Capabilities.All.Count(
-        capability => capability.Status == CapabilityStatus.Supported));
+        capability => capability.Status == CapabilityStatus.Supported && capability.Confidence == CapabilityConfidence.Verified));
 
     public string DeviceName => _shell.SelectedDevice?.FriendlyName ?? "Aún no hay televisores en la biblioteca";
 
@@ -61,7 +61,7 @@ public sealed class DashboardViewModel : ViewModelBase
 
     public bool HasLibraryError => !string.IsNullOrWhiteSpace(_shell.ErrorMessage);
 
-    public string SupportedSummary => $"{SupportedCount} comprobadas";
+    public string SupportedSummary => $"{SupportedCount} según protocolo";
 
     public string NeedsSetupSummary => $"{NeedsSetupCount} requieren configuración";
 
