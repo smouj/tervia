@@ -82,8 +82,16 @@ public sealed class HomeViewModel : ViewModelBase
     public bool ShowClock
     {
         get => _showClock;
-        set { if (_showClock == value) return; _showClock = value; OnPropertyChanged(); }
+        set
+        {
+            if (_showClock == value) return;
+            _showClock = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(ShowClockLabel));
+        }
     }
+
+    public string ShowClockLabel => ShowClock ? "Reloj: visible" : "Reloj: oculto";
 
     public async Task LoadAsync(CancellationToken cancellationToken = default)
     {

@@ -23,6 +23,8 @@ public sealed partial class HomePage : Page
 
     private async void OnLoaded(object sender, RoutedEventArgs args)
     {
+        ViewModel.PropertyChanged -= OnViewModelPropertyChanged;
+        ViewModel.PropertyChanged += OnViewModelPropertyChanged;
         ViewModel.Shell.PropertyChanged -= OnShellPropertyChanged;
         ViewModel.Shell.PropertyChanged += OnShellPropertyChanged;
         _isLoadingTheme = true;
@@ -33,11 +35,21 @@ public sealed partial class HomePage : Page
         SelectTheme(ViewModel.Theme);
         _isLoadingTheme = false;
         UpdatePreview();
+        UpdateErrorBanner();
     }
 
     private void OnUnloaded(object sender, RoutedEventArgs args)
     {
+        ViewModel.PropertyChanged -= OnViewModelPropertyChanged;
         ViewModel.Shell.PropertyChanged -= OnShellPropertyChanged;
+    }
+
+    private void OnViewModelPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs args)
+    {
+        if (args.PropertyName is nameof(HomeViewModel.Error) or nameof(HomeViewModel.HasError))
+        {
+            UpdateErrorBanner();
+        }
     }
 
     private async void OnShellPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs args)
@@ -59,8 +71,33 @@ public sealed partial class HomePage : Page
         }
     }
 
-    private void OnClockToggled(object sender, RoutedEventArgs args)
-        => UpdatePreview();
+    private void OnClockToggleClick(object sender, RoutedEventArgs args)
+    {
+        ViewModel.ShowClock = !ViewModel.ShowClock;
+        UpdatePreview();
+    }
+
+    private void OnVisibilityClick(object sender, RoutedEventArgs args)
+    {
+        if (sender is Button { DataContext: HomeApplicationOption application })
+        {
+            application.IsVisible = !application.IsVisible;
+        }
+    }
+
+    private void OnPinClick(object sender, RoutedEventArgs args)
+    {
+        if (sender is Button { DataContext: HomeApplicationOption application })
+        {
+            application.IsPinned = !application.IsPinned;
+        }
+    }
+
+    private void UpdateErrorBanner()
+    {
+        ErrorText.Text = ViewModel.Error ?? string.Empty;
+        ErrorBanner.Visibility = ViewModel.HasError ? Visibility.Visible : Visibility.Collapsed;
+    }
 
     private void UpdatePreview()
     {
