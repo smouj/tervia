@@ -71,11 +71,14 @@ Si Windows indica que falta el runtime de Visual C++, instala el
 [paquete x64 oficial de Microsoft](https://aka.ms/vc14/vc_redist.x64.exe) y vuelve a
 abrir Tervia.
 
-El ZIP de **Releases** incluye .NET y Windows App SDK. La versión pública actual,
-`v0.1.0-alpha`, es anterior a Tervia Home y **no incluye su APK**. El siguiente paquete
-Android necesita una clave de firma estable configurada en GitHub Actions para que las
-futuras actualizaciones puedan instalarse sobre la misma app. Para compilar y probar
-Tervia Home antes de esa publicación, sigue [Desarrollo](docs/DEVELOPMENT.md).
+El ZIP de **Releases** incluye .NET y Windows App SDK. La publicación `v0.1.0-alpha`
+es anterior a Tervia Home; desde `v0.2.0-alpha`, el ZIP incluye
+`Tervia.Home.Android.apk`, firmado con la clave estable del proyecto. Los paquetes
+posteriores conservan la firma y aumentan el código de versión para permitir
+actualizaciones. Revisa las notas de cada [release](https://github.com/smouj/tervia/releases)
+y la [matriz de compatibilidad](docs/COMPATIBILITY.md): aún falta validar el launcher en
+modelos físicos. Para compilar Tervia Home desde el código, sigue
+[Desarrollo](docs/DEVELOPMENT.md).
 
 Si Windows te pide descargar .NET, confirma que extrajiste el ZIP completo y abriste
 `Tervia.exe` (no `Tervia.dll` ni una versión compilada desde el código). Para compilar
