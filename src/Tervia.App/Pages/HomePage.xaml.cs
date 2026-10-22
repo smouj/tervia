@@ -12,8 +12,8 @@ public sealed partial class HomePage : Page
     public HomePage(HomeViewModel viewModel)
     {
         ViewModel = viewModel;
-        InitializeComponent();
         _isLoadingTheme = true;
+        InitializeComponent();
         SelectTheme(ViewModel.Theme);
         _isLoadingTheme = false;
         UpdatePreview();
