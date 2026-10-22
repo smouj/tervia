@@ -36,24 +36,25 @@ claridad qué funciones están implementadas y cuáles siguen pendientes.
 > El flujo está compilado y probado automáticamente; aún no se ha validado en modelos de
 > TV físicos, así que la compatibilidad depende del fabricante y firmware.
 
-## Así se ve la aplicación
+## Capturas de pantalla
 
-Estas imágenes se capturan de la aplicación Tervia ejecutándose en Windows. Son
-pantallas de la aplicación de escritorio; **no son capturas de una televisión**.
-La captura real por ADB está disponible bajo demanda para TVs Android compatibles,
-pero todavía no hay modelos validados en hardware.
+Capturas reales de **Tervia 0.2.0-alpha** ejecutándose en Windows, a 1360 × 768.
+Muestran la aplicación de escritorio; **no son imágenes de la pantalla de una TV**.
+Se tomaron sin una TV seleccionada, por eso el editor muestra las aplicaciones de
+ejemplo y mantiene deshabilitadas las acciones que necesitan una conexión.
 
-| Escritorio: resumen | Escritorio: descubrimiento |
+| Inicio | Inicio de TV |
 | --- | --- |
-| ![Pantalla Inicio de Tervia para Windows](assets/screenshots/home.png) | ![Pantalla de descubrimiento local de Tervia](assets/screenshots/discovery.png) |
+| ![Resumen de Tervia para Windows](assets/screenshots/home.png) | ![Editor de Tervia Home con vista previa](assets/screenshots/tv-home.png) |
 
-| Escritorio: privacidad |
-| --- |
-| ![Pantalla de privacidad de Tervia](assets/screenshots/privacy.png) |
+| Descubrir | Privacidad y datos |
+| --- | --- |
+| ![Descubrimiento local SSDP y mDNS](assets/screenshots/discovery.png) | ![Datos locales y privacidad de Tervia](assets/screenshots/privacy.png) |
 
-La vista previa del inicio que se personaliza desde Windows aparece en la sección
-**Inicio de TV**. La imagen de escritorio es una vista previa orientativa; la TV carga
-sus propios iconos y aplicaciones.
+La vista previa de **Inicio de TV** representa el diseño que puedes configurar desde
+Windows. En una TV compatible, Tervia Home carga sus propias aplicaciones e iconos.
+La captura de pantalla de la TV se obtiene por ADB bajo demanda; la compatibilidad
+física aún depende del modelo y firmware.
 
 ## Descargar y empezar
 
