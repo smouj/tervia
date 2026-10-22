@@ -76,8 +76,12 @@ public sealed partial class MainWindow : Window
         var handle = WindowNative.GetWindowHandle(this);
         var windowId = Win32Interop.GetWindowIdFromWindow(handle);
         var workArea = DisplayArea.GetFromWindowId(windowId, DisplayAreaFallback.Primary).WorkArea;
-        var width = Math.Min(1440, workArea.Width);
-        var height = Math.Min(960, workArea.Height);
-        AppWindow.GetFromWindowId(windowId).Resize(new SizeInt32(width, height));
+        var width = Math.Min(workArea.Width, Math.Min(1440, Math.Max(960, (int)Math.Round(workArea.Width * 0.9))));
+        var height = Math.Min(workArea.Height, Math.Min(960, Math.Max(680, (int)Math.Round(workArea.Height * 0.88))));
+        var appWindow = AppWindow.GetFromWindowId(windowId);
+        appWindow.Resize(new SizeInt32(width, height));
+        appWindow.Move(new PointInt32(
+            workArea.X + (workArea.Width - width) / 2,
+            workArea.Y + (workArea.Height - height) / 2));
     }
 }

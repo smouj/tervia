@@ -6,20 +6,21 @@
     Loaded="OnLoaded"
     Unloaded="OnUnloaded">
     <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <StackPanel Padding="26" Spacing="18" MaxWidth="1180">
+        <StackPanel Padding="26" Spacing="18" MaxWidth="1180" HorizontalAlignment="Center">
             <StackPanel Spacing="4">
                 <TextBlock Text="Inicio de TV" FontSize="30" FontWeight="SemiBold" />
                 <TextBlock Text="Diseña la pantalla que aparece al pulsar Inicio en una TV Android compatible."
                            FontSize="14" Opacity="0.76" TextWrapping="Wrap" />
             </StackPanel>
 
-            <InfoBar IsOpen="{x:Bind ViewModel.HasError, Mode=OneWay}"
-                     Severity="Error" Title="No se completó la operación"
-                     Message="{x:Bind ViewModel.Error, Mode=OneWay}" />
+            <Border x:Name="ErrorBanner" Padding="14" CornerRadius="10"
+                    Background="#3A2028" BorderBrush="#75414A" BorderThickness="1"
+                    Visibility="Collapsed">
+                <TextBlock x:Name="ErrorText" TextWrapping="Wrap" />
+            </Border>
 
             <Border Padding="20" CornerRadius="14"
-                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1">
+                    Background="#141D2B" BorderBrush="#28364A" BorderThickness="1">
                 <Grid ColumnSpacing="24">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="1.15*" />
@@ -45,8 +46,8 @@
                             <ComboBoxItem Content="Atardecer" Tag="sunset" />
                             <ComboBoxItem Content="Bosque" Tag="forest" />
                         </ComboBox>
-                        <ToggleSwitch Header="Mostrar reloj" IsOn="{x:Bind ViewModel.ShowClock, Mode=TwoWay}"
-                                      OnContent="Sí" OffContent="No" Toggled="OnClockToggled" />
+                        <Button x:Name="ClockButton" Content="{x:Bind ViewModel.ShowClockLabel, Mode=OneWay}"
+                                Click="OnClockToggleClick" HorizontalAlignment="Left" />
                     </StackPanel>
 
                     <StackPanel Grid.Column="1" Spacing="10">
@@ -93,8 +94,7 @@
             </Border>
 
             <Border Padding="20" CornerRadius="14"
-                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1">
+                    Background="#141D2B" BorderBrush="#28364A" BorderThickness="1">
                 <StackPanel Spacing="12">
                     <StackPanel Spacing="4">
                         <TextBlock Text="Aplicaciones de la TV" FontSize="20" FontWeight="SemiBold" />
@@ -116,10 +116,10 @@
                                         <TextBlock Text="{x:Bind Id}" FontSize="11" Opacity="0.65"
                                                    FontFamily="Consolas" />
                                     </StackPanel>
-                                    <CheckBox Grid.Column="1" Content="Mostrar"
-                                              IsChecked="{x:Bind IsVisible, Mode=TwoWay}" />
-                                    <CheckBox Grid.Column="2" Content="Fijar primero"
-                                              IsChecked="{x:Bind IsPinned, Mode=TwoWay}" />
+                                    <Button Grid.Column="1" Content="{x:Bind VisibilityLabel, Mode=OneWay}"
+                                            Click="OnVisibilityClick" />
+                                    <Button Grid.Column="2" Content="{x:Bind PinLabel, Mode=OneWay}"
+                                            Click="OnPinClick" />
                                 </Grid>
                             </DataTemplate>
                         </ListView.ItemTemplate>

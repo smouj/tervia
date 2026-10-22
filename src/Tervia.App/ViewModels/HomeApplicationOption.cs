@@ -12,11 +12,19 @@ public sealed class HomeApplicationOption(string id, string name, bool isVisible
 
     public string Id { get; } = id;
     public string Name { get; } = name;
+    public string VisibilityLabel => IsVisible ? "Visible" : "Oculta";
+    public string PinLabel => IsPinned ? "Fijada" : "Fijar primero";
 
     public bool IsVisible
     {
         get => _isVisible;
-        set => SetField(ref _isVisible, value);
+        set
+        {
+            if (SetField(ref _isVisible, value))
+            {
+                OnPropertyChanged(nameof(VisibilityLabel));
+            }
+        }
     }
 
     public bool IsPinned
@@ -24,9 +32,13 @@ public sealed class HomeApplicationOption(string id, string name, bool isVisible
         get => _isPinned;
         set
         {
-            if (SetField(ref _isPinned, value) && value)
+            if (SetField(ref _isPinned, value))
             {
-                IsVisible = true;
+                OnPropertyChanged(nameof(PinLabel));
+                if (value)
+                {
+                    IsVisible = true;
+                }
             }
         }
     }
@@ -41,4 +53,7 @@ public sealed class HomeApplicationOption(string id, string name, bool isVisible
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         return true;
     }
+
+    private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 }
