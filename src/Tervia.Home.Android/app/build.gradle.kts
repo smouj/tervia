@@ -3,7 +3,7 @@ plugins {
 }
 
 val terviaHomeVersionName = providers.environmentVariable("TERVIA_HOME_VERSION_NAME")
-    .orElse("0.2.0-alpha")
+    .orElse("0.3.0-alpha")
     .get()
 val terviaHomeVersionCode = providers.environmentVariable("TERVIA_HOME_VERSION_CODE")
     .map { it.toInt() }

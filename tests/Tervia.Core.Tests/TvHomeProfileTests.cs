@@ -15,16 +15,34 @@ public sealed class TvHomeProfileTests
         {
             Title = " Sala\nprincipal ",
             Subtitle = new string('x', 120),
+            ApplicationsTitle = new string('A', 50),
             Theme = "not-a-theme",
+            CardLayout = "oversized",
             PinnedApplicationIds = ["com.example.video", "bad package", "com.example.video", "com.example.other"],
             HiddenApplicationIds = ["../system", "org.example.music"],
         }.Normalize();
 
         Assert.Equal("Sala principal", profile.Title);
         Assert.Equal(88, profile.Subtitle.Length);
+        Assert.Equal(36, profile.ApplicationsTitle.Length);
         Assert.Equal("ocean", profile.Theme);
+        Assert.Equal("comfortable", profile.CardLayout);
         Assert.Equal(ExpectedPinned, profile.PinnedApplicationIds);
         Assert.Equal(ExpectedHidden, profile.HiddenApplicationIds);
+    }
+
+    [Theory]
+    [InlineData("ocean")]
+    [InlineData("violet")]
+    [InlineData("sunset")]
+    [InlineData("forest")]
+    [InlineData("rose")]
+    [InlineData("gold")]
+    [InlineData("ice")]
+    [InlineData("graphite")]
+    public void Normalize_accepts_each_theme_rendered_by_both_apps(string theme)
+    {
+        Assert.Equal(theme, new TvHomeProfile { Theme = theme }.Normalize().Theme);
     }
 
     [Fact]

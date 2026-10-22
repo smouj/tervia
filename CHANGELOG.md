@@ -1,19 +1,30 @@
 # Changelog
 
 All notable changes are documented here. Format follows Keep a Changelog and the
-project uses semantic versioning once the first release exists.
+project uses semantic versioning.
 
-## [Unreleased]
+## [0.3.0-alpha] - 2026-10-23
 
 ### Added
+
+- Rebuilt the Tervia Home editor around a live 16:9 launcher preview. Text, eight colour
+  palettes, clock/branding visibility, card density, the selected TV's visible apps and
+  pinned order now stay in sync with the Android profile. Added exact ordering controls
+  for pinned apps and clear disclosure that Windows uses monograms while the TV renders
+  Android's native app names and icons.
+- Added a local-only save action so profiles can be kept per TV without contacting it;
+  applying the saved design to Android remains a separate, explicit ADB action.
+- Android Home now applies the matching colour backgrounds, custom applications heading,
+  optional Tervia branding and compact/comfortable cards; older version-1 profiles keep
+  their previous appearance through defaults for the newly added fields.
 
 - Android TV Home companion: a TV-first launcher with configurable title, subtitle,
   accent theme, clock, app visibility and pinned-first ordering. The Windows shell can
   install the APK and apply each TV's saved local profile.
 - The launcher requests Android's Home role/selection instead of disabling the
   manufacturer launcher; users can return to Android's Home Settings to restore it.
-- Gradle Wrapper and Android API 36 build validation are being integrated into the
-  Windows package and CI. Physical TV compatibility remains unverified.
+- Gradle Wrapper and Android API 36 build validation are included in Windows CI and the
+  release package. Physical TV compatibility remains unverified.
 - Android TV, Google TV and Fire TV profiles expose basic ADB remote keys and an
   on-demand screenshot preview. ADB behavior is exercised with a fake process runner;
   no physical TV has been validated.

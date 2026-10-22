@@ -224,16 +224,18 @@ public final class HomeActivity extends Activity {
 
         FrameLayout root = new FrameLayout(this);
         root.setBackground(new GradientDrawable(GradientDrawable.Orientation.TL_BR,
-                new int[]{Color.rgb(7, 18, 32), Color.rgb(10, 35, 62), Color.rgb(11, 25, 45)}));
+                LauncherProfile.backgroundColors(profile.theme)));
         root.addView(scroll, new FrameLayout.LayoutParams(
                 FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
         setContentView(root);
         clockHandler.removeCallbacks(clockUpdater);
 
-        content.addView(buildHeader(accent));
+        if (profile.showBranding || profile.showClock) {
+            content.addView(buildHeader(accent));
+        }
         content.addView(buildHero(accent), marginParams(-1, -2, 0, 28, 0, 25));
 
-        TextView sectionTitle = text("Tus aplicaciones", 23, Color.WHITE, Typeface.BOLD);
+        TextView sectionTitle = text(profile.applicationsTitle, 23, Color.WHITE, Typeface.BOLD);
         content.addView(sectionTitle, marginParams(-1, -2, 2, 0, 0, 5));
         TextView sectionHint = text("Selecciona una aplicación con el mando de tu televisor.", 15,
                 0xFFAFBED0, Typeface.NORMAL);
@@ -252,16 +254,20 @@ public final class HomeActivity extends Activity {
         ImageView logo = new ImageView(this);
         logo.setImageResource(com.tervia.home.R.drawable.tervia_logo);
         logo.setScaleType(ImageView.ScaleType.FIT_CENTER);
-        row.addView(logo, new LinearLayout.LayoutParams(dp(42), dp(42)));
+        if (profile.showBranding) {
+            row.addView(logo, new LinearLayout.LayoutParams(dp(42), dp(42)));
 
-        LinearLayout brand = new LinearLayout(this);
-        brand.setOrientation(LinearLayout.VERTICAL);
-        brand.setPadding(dp(12), 0, 0, 0);
-        TextView brandName = text("TERVIA HOME", 15, Color.WHITE, Typeface.BOLD);
-        TextView brandCaption = text("TU TELEVISOR, A TU MANERA", 10, 0xFFACBED2, Typeface.NORMAL);
-        brand.addView(brandName);
-        brand.addView(brandCaption);
-        row.addView(brand, new LinearLayout.LayoutParams(0, -2, 1));
+            LinearLayout brand = new LinearLayout(this);
+            brand.setOrientation(LinearLayout.VERTICAL);
+            brand.setPadding(dp(12), 0, 0, 0);
+            TextView brandName = text("TERVIA HOME", 15, Color.WHITE, Typeface.BOLD);
+            TextView brandCaption = text("TU TELEVISOR, A TU MANERA", 10, 0xFFACBED2, Typeface.NORMAL);
+            brand.addView(brandName);
+            brand.addView(brandCaption);
+            row.addView(brand, new LinearLayout.LayoutParams(0, -2, 1));
+        } else {
+            row.addView(new View(this), new LinearLayout.LayoutParams(0, dp(42), 1));
+        }
 
         if (profile.showClock) {
             clock = text("", 20, Color.WHITE, Typeface.BOLD);
@@ -279,9 +285,9 @@ public final class HomeActivity extends Activity {
         panel.setOrientation(LinearLayout.VERTICAL);
         panel.setPadding(dp(26), dp(22), dp(26), dp(22));
         GradientDrawable background = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT,
-                new int[]{0xE6112F52, 0xCC102447});
+                LauncherProfile.heroColors(profile.theme));
         background.setCornerRadius(dp(22));
-        background.setStroke(dp(1), 0x5539D8F2);
+        background.setStroke(dp(1), Color.argb(85, Color.red(accent), Color.green(accent), Color.blue(accent)));
         panel.setBackground(background);
 
         TextView eyebrow = text("UN INICIO MÁS TUYO", 11, accent, Typeface.BOLD);
@@ -325,32 +331,36 @@ public final class HomeActivity extends Activity {
         GridLayout grid = new GridLayout(this);
         int widthDp = (int) (getResources().getDisplayMetrics().widthPixels
                 / getResources().getDisplayMetrics().density);
-        grid.setColumnCount(Math.max(3, Math.min(6, widthDp / 190)));
+        int cardWidth = profile.cardLayout.equals("compact") ? 146 : 176;
+        int minimumColumnWidth = profile.cardLayout.equals("compact") ? 162 : 192;
+        grid.setColumnCount(Math.max(3, Math.min(6, widthDp / minimumColumnWidth)));
         for (TvApp app : applications) {
-            grid.addView(buildAppCard(app, accent));
+            grid.addView(buildAppCard(app, accent, cardWidth));
         }
         return grid;
     }
 
-    private View buildAppCard(TvApp app, int accent) {
+    private View buildAppCard(TvApp app, int accent, int cardWidth) {
         LinearLayout card = new LinearLayout(this);
         card.setOrientation(LinearLayout.VERTICAL);
         card.setGravity(Gravity.CENTER);
         card.setFocusable(true);
         card.setClickable(true);
-        card.setPadding(dp(14), dp(10), dp(14), dp(11));
+        boolean compact = profile.cardLayout.equals("compact");
+        card.setPadding(dp(compact ? 10 : 14), dp(compact ? 7 : 10), dp(compact ? 10 : 14), dp(compact ? 8 : 11));
         card.setContentDescription(app.label);
         card.setBackground(cardBackground(false, accent));
 
         ImageView icon = new ImageView(this);
         icon.setImageDrawable(app.icon);
         icon.setScaleType(ImageView.ScaleType.FIT_CENTER);
-        card.addView(icon, new LinearLayout.LayoutParams(dp(62), dp(62)));
+        int iconSize = compact ? 48 : 62;
+        card.addView(icon, new LinearLayout.LayoutParams(dp(iconSize), dp(iconSize)));
 
         TextView label = text(app.label, 14, Color.WHITE, Typeface.BOLD);
         label.setMaxLines(2);
         label.setGravity(Gravity.CENTER);
-        card.addView(label, marginParams(-1, -2, 0, dp(8), 0, 0));
+        card.addView(label, marginParams(-1, -2, 0, compact ? 5 : dp(8), 0, 0));
 
         card.setOnFocusChangeListener((view, focused) -> {
             view.setBackground(cardBackground(focused, accent));
@@ -361,8 +371,8 @@ public final class HomeActivity extends Activity {
         card.setOnClickListener(view -> launchApplication(app));
 
         GridLayout.LayoutParams params = new GridLayout.LayoutParams();
-        params.width = dp(176);
-        params.height = dp(146);
+        params.width = dp(cardWidth);
+        params.height = dp(compact ? 116 : 146);
         params.setMargins(dp(8), dp(8), dp(8), dp(8));
         card.setLayoutParams(params);
         return card;

@@ -8,13 +8,18 @@ public sealed class HomeViewModel : ViewModelBase
 {
     private readonly TvHomeService _home;
     private int _loadGeneration;
+    private TvHomeProfile _lastLoadedProfile = new();
+    private bool _applicationInventoryLoaded;
     private bool _isBusy;
     private string _status = "Selecciona una TV Android para configurar Tervia Home.";
     private string? _error;
     private string _title = "Mi televisión";
     private string _subtitle = TvHomeProfile.DefaultSubtitle;
+    private string _applicationsTitle = "Tus aplicaciones";
     private string _theme = "ocean";
+    private string _cardLayout = "comfortable";
     private bool _showClock = true;
+    private bool _showBranding = true;
 
     public HomeViewModel(ShellViewModel shell, TvHomeService home)
     {
@@ -25,6 +30,17 @@ public sealed class HomeViewModel : ViewModelBase
     public ShellViewModel Shell { get; }
 
     public ObservableCollection<HomeApplicationOption> Applications { get; } = [];
+    public IReadOnlyList<HomeApplicationOption> VisibleApplications
+        => Applications
+            .Select((application, index) => (application, index))
+            .Where(item => item.application.IsVisible)
+            .OrderBy(item => item.application.IsPinned ? 0 : 1)
+            .ThenBy(item => item.application.IsPinned ? item.index : 0)
+            .ThenBy(item => item.application.IsPinned ? string.Empty : item.application.DisplayName,
+                StringComparer.CurrentCultureIgnoreCase)
+            .Select(item => item.application)
+            .ToArray();
+    public bool HasApplicationInventory => _applicationInventoryLoaded;
 
     public bool IsBusy
     {
@@ -37,6 +53,7 @@ public sealed class HomeViewModel : ViewModelBase
             OnPropertyChanged(nameof(CanInstall));
             OnPropertyChanged(nameof(CanSync));
             OnPropertyChanged(nameof(CanRestore));
+            OnPropertyChanged(nameof(CanSaveLocally));
         }
     }
 
@@ -44,6 +61,7 @@ public sealed class HomeViewModel : ViewModelBase
     public bool CanInstall => !IsBusy && IsSupportedTv;
     public bool CanSync => !IsBusy && IsSupportedTv && IsHomeInstalled;
     public bool CanRestore => !IsBusy && IsSupportedTv && IsHomeInstalled;
+    public bool CanSaveLocally => !IsBusy && Shell.SelectedDevice is not null;
 
     public bool IsSupportedTv => Shell.SelectedDevice?.Platform is TvPlatform.AndroidTV or TvPlatform.GoogleTV or TvPlatform.FireTV;
 
@@ -73,10 +91,33 @@ public sealed class HomeViewModel : ViewModelBase
         set { if (_subtitle == value) return; _subtitle = value; OnPropertyChanged(); }
     }
 
+    public string ApplicationsTitle
+    {
+        get => _applicationsTitle;
+        set { if (_applicationsTitle == value) return; _applicationsTitle = value; OnPropertyChanged(); }
+    }
+
     public string Theme
     {
         get => _theme;
-        set { if (_theme == value) return; _theme = value; OnPropertyChanged(); }
+        set
+        {
+            var normalized = TvHomeProfile.SupportedThemes.Contains(value) ? value : "ocean";
+            if (_theme == normalized) return;
+            _theme = normalized;
+            OnPropertyChanged();
+        }
+    }
+
+    public string CardLayout
+    {
+        get => _cardLayout;
+        set
+        {
+            if (_cardLayout == value) return;
+            _cardLayout = TvHomeProfile.SupportedCardLayouts.Contains(value) ? value : "comfortable";
+            OnPropertyChanged();
+        }
     }
 
     public bool ShowClock
@@ -93,13 +134,28 @@ public sealed class HomeViewModel : ViewModelBase
 
     public string ShowClockLabel => ShowClock ? "Reloj: visible" : "Reloj: oculto";
 
+    public bool ShowBranding
+    {
+        get => _showBranding;
+        set
+        {
+            if (_showBranding == value) return;
+            _showBranding = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(ShowBrandingLabel));
+        }
+    }
+
+    public string ShowBrandingLabel => ShowBranding ? "Marca Tervia: visible" : "Marca Tervia: oculta";
+
     public async Task LoadAsync(CancellationToken cancellationToken = default)
     {
         var generation = Interlocked.Increment(ref _loadGeneration);
         if (Shell.SelectedDevice is not { } device)
         {
             IsBusy = false;
-            Applications.Clear();
+            ClearApplications();
+            ApplyProfileToEditor(new TvHomeProfile());
             IsHomeInstalled = false;
             Error = null;
             Status = "Añade y selecciona una TV Android para preparar la pantalla de inicio.";
@@ -110,13 +166,32 @@ public sealed class HomeViewModel : ViewModelBase
 
         if (!IsSupportedTv)
         {
-            IsBusy = false;
-            Applications.Clear();
+            ClearApplications();
             IsHomeInstalled = false;
             Error = null;
-            Status = "La personalización de inicio está disponible para Android TV, Google TV y televisores Fire TV compatibles. El inicio de otros sistemas permanece intacto.";
+            IsBusy = true;
+            Status = "Cargando el perfil local de esta TV…";
             OnPropertyChanged(nameof(IsSupportedTv));
-            NotifyHomeActionsChanged();
+            try
+            {
+                var profile = await _home.LoadProfileAsync(device, cancellationToken);
+                if (generation != Volatile.Read(ref _loadGeneration)) return;
+                ApplyProfileToEditor(profile);
+                Status = "El perfil queda guardado en este equipo. El launcher de esta plataforma no se modifica.";
+            }
+            catch (Exception exception)
+            {
+                Error = GetUserError(exception);
+                Status = "No se pudo leer el perfil local de esta TV.";
+            }
+            finally
+            {
+                if (generation == Volatile.Read(ref _loadGeneration))
+                {
+                    IsBusy = false;
+                    NotifyHomeActionsChanged();
+                }
+            }
             return;
         }
 
@@ -126,28 +201,37 @@ public sealed class HomeViewModel : ViewModelBase
         Error = null;
         Status = $"Leyendo las aplicaciones instaladas en {device.FriendlyName}…";
         OnPropertyChanged(nameof(IsSupportedTv));
+        ClearApplications();
         try
         {
             var profile = await _home.LoadProfileAsync(device, cancellationToken);
             if (generation != Volatile.Read(ref _loadGeneration)) return;
+            ApplyProfileToEditor(profile);
             var installedApps = await _home.ListApplicationsAsync(device, cancellationToken);
             if (generation != Volatile.Read(ref _loadGeneration)) return;
             IsHomeInstalled = installedApps.Any(item => string.Equals(item.Id, "com.tervia.home", StringComparison.Ordinal));
             NotifyHomeActionsChanged();
-            Title = profile.Title;
-            Subtitle = profile.Subtitle;
-            Theme = profile.Theme;
-            ShowClock = profile.ShowClock;
             var pinned = new HashSet<string>(profile.PinnedApplicationIds, StringComparer.Ordinal);
             var hidden = new HashSet<string>(profile.HiddenApplicationIds, StringComparer.Ordinal);
-            Applications.Clear();
-            foreach (var app in installedApps.OrderBy(item => item.Name, StringComparer.CurrentCultureIgnoreCase))
+            var pinnedOrder = profile.PinnedApplicationIds
+                .Select((id, index) => (id, index))
+                .ToDictionary(item => item.id, item => item.index, StringComparer.Ordinal);
+            ClearApplications();
+            foreach (var app in installedApps
+                         .OrderBy(item => pinnedOrder.GetValueOrDefault(item.Id, int.MaxValue))
+                         .ThenBy(item => item.Name, StringComparer.CurrentCultureIgnoreCase))
             {
                 if (app.Id != "com.tervia.home")
                 {
-                    Applications.Add(new HomeApplicationOption(app.Id, app.Name, !hidden.Contains(app.Id), pinned.Contains(app.Id)));
+                    var option = new HomeApplicationOption(app.Id, app.Name, !hidden.Contains(app.Id), pinned.Contains(app.Id));
+                    option.PropertyChanged += OnApplicationPropertyChanged;
+                    Applications.Add(option);
                 }
             }
+            _applicationInventoryLoaded = true;
+            OnPropertyChanged(nameof(HasApplicationInventory));
+            RefreshPinnedMoveAvailability();
+            OnPropertyChanged(nameof(VisibleApplications));
             Status = Applications.Count == 0
                 ? IsHomeInstalled
                     ? "Tervia Home está instalada. No se encontraron aplicaciones de terceros para mostrar."
@@ -169,6 +253,129 @@ public sealed class HomeViewModel : ViewModelBase
         }
     }
 
+    public void ToggleVisibility(HomeApplicationOption application)
+    {
+        if (!Applications.Contains(application)) return;
+        application.IsVisible = !application.IsVisible;
+        if (!application.IsVisible)
+        {
+            application.IsPinned = false;
+        }
+    }
+
+    public void TogglePinned(HomeApplicationOption application)
+    {
+        if (!Applications.Contains(application)) return;
+        var shouldPin = !application.IsPinned;
+        application.IsPinned = shouldPin;
+        if (!shouldPin) return;
+
+        var lastPinned = Applications.LastOrDefault(item => item != application && item.IsVisible && item.IsPinned);
+        var targetIndex = lastPinned is null ? 0 : Applications.IndexOf(lastPinned) + 1;
+        var currentIndex = Applications.IndexOf(application);
+        if (currentIndex != targetIndex)
+        {
+            Applications.Move(currentIndex, targetIndex);
+        }
+        OnPropertyChanged(nameof(VisibleApplications));
+        RefreshPinnedMoveAvailability();
+    }
+
+    public void MovePinnedApplication(HomeApplicationOption application, int direction)
+    {
+        if (!Applications.Contains(application) || !application.IsPinned || !application.IsVisible || Math.Abs(direction) != 1)
+        {
+            return;
+        }
+
+        var pinned = Applications.Where(item => item.IsVisible && item.IsPinned).ToList();
+        var pinnedIndex = pinned.IndexOf(application);
+        var targetPinnedIndex = pinnedIndex + direction;
+        if (targetPinnedIndex < 0 || targetPinnedIndex >= pinned.Count) return;
+
+        var currentIndex = Applications.IndexOf(application);
+        var targetIndex = Applications.IndexOf(pinned[targetPinnedIndex]);
+        Applications.Move(currentIndex, targetIndex);
+        OnPropertyChanged(nameof(VisibleApplications));
+        RefreshPinnedMoveAvailability();
+    }
+
+    public async Task SaveLocallyAsync(CancellationToken cancellationToken = default)
+    {
+        if (Shell.SelectedDevice is not { } device)
+        {
+            Error = "Selecciona primero una TV para guardar su diseño local.";
+            return;
+        }
+
+        IsBusy = true;
+        Error = null;
+        Status = "Guardando el diseño solo en este equipo…";
+        try
+        {
+            var profile = BuildProfile().ForDevice(device);
+            await _home.SaveProfileLocallyAsync(device, profile, cancellationToken);
+            _lastLoadedProfile = profile;
+            ApplyProfileToEditor(profile);
+            Status = "Diseño guardado en este equipo. Aún no se han enviado cambios a la TV.";
+        }
+        catch (Exception)
+        {
+            Error = "No se pudo guardar el diseño local en este equipo.";
+            Status = "No se completó el guardado local.";
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    private void ClearApplications()
+    {
+        _applicationInventoryLoaded = false;
+        OnPropertyChanged(nameof(HasApplicationInventory));
+        foreach (var application in Applications)
+        {
+            application.PropertyChanged -= OnApplicationPropertyChanged;
+        }
+        Applications.Clear();
+        OnPropertyChanged(nameof(VisibleApplications));
+    }
+
+    private void ApplyProfileToEditor(TvHomeProfile profile)
+    {
+        Title = profile.Title;
+        Subtitle = profile.Subtitle;
+        ApplicationsTitle = profile.ApplicationsTitle;
+        Theme = profile.Theme;
+        CardLayout = profile.CardLayout;
+        ShowClock = profile.ShowClock;
+        ShowBranding = profile.ShowBranding;
+        _lastLoadedProfile = profile;
+    }
+
+    private void OnApplicationPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs args)
+    {
+        if (args.PropertyName is nameof(HomeApplicationOption.IsPinned) or nameof(HomeApplicationOption.IsVisible))
+        {
+            OnPropertyChanged(nameof(VisibleApplications));
+            RefreshPinnedMoveAvailability();
+        }
+    }
+
+    private void RefreshPinnedMoveAvailability()
+    {
+        var pinned = Applications.Where(item => item.IsVisible && item.IsPinned).ToList();
+        for (var index = 0; index < pinned.Count; index++)
+        {
+            pinned[index].SetMoveAvailability(index > 0, index < pinned.Count - 1);
+        }
+        foreach (var unpinned in Applications.Where(item => !item.IsPinned || !item.IsVisible))
+        {
+            unpinned.SetMoveAvailability(false, false);
+        }
+    }
+
     public async Task InstallAndApplyAsync(string apkPath, bool confirmed, CancellationToken cancellationToken = default)
     {
         if (Shell.SelectedDevice is not { } device)
@@ -181,8 +388,10 @@ public sealed class HomeViewModel : ViewModelBase
         Status = "Instalando Tervia Home y enviando tu diseño…";
         try
         {
-            var profile = BuildProfile();
+            var profile = BuildProfile().ForDevice(device);
+            ApplyProfileToEditor(profile);
             await _home.InstallAndApplyAsync(device, profile, apkPath, confirmed, cancellationToken);
+            _lastLoadedProfile = profile;
             Status = "Tervia Home se abrió en la TV. Confirma allí si quieres establecerla como inicio.";
             IsHomeInstalled = true;
             NotifyHomeActionsChanged();
@@ -210,7 +419,9 @@ public sealed class HomeViewModel : ViewModelBase
         Status = "Sincronizando el diseño…";
         try
         {
-            await _home.ApplyAsync(device, BuildProfile(), cancellationToken);
+            var profile = BuildProfile().ForDevice(device);
+            await _home.ApplyAsync(device, profile, cancellationToken);
+            _lastLoadedProfile = profile;
             Status = "Diseño guardado en esta TV y en este equipo.";
         }
         catch (Exception exception)
@@ -254,10 +465,17 @@ public sealed class HomeViewModel : ViewModelBase
         {
             Title = Title,
             Subtitle = Subtitle,
+            ApplicationsTitle = ApplicationsTitle,
             Theme = Theme,
+            CardLayout = CardLayout,
             ShowClock = ShowClock,
-            PinnedApplicationIds = Applications.Where(item => item.IsVisible && item.IsPinned).Select(item => item.Id).ToArray(),
-            HiddenApplicationIds = Applications.Where(item => !item.IsVisible).Select(item => item.Id).ToArray(),
+            ShowBranding = ShowBranding,
+            PinnedApplicationIds = _applicationInventoryLoaded
+                ? Applications.Where(item => item.IsVisible && item.IsPinned).Select(item => item.Id).ToArray()
+                : _lastLoadedProfile.PinnedApplicationIds,
+            HiddenApplicationIds = _applicationInventoryLoaded
+                ? Applications.Where(item => !item.IsVisible).Select(item => item.Id).ToArray()
+                : _lastLoadedProfile.HiddenApplicationIds,
         }.Normalize();
 
     private void NotifyHomeActionsChanged()
@@ -266,6 +484,7 @@ public sealed class HomeViewModel : ViewModelBase
         OnPropertyChanged(nameof(CanInstall));
         OnPropertyChanged(nameof(CanSync));
         OnPropertyChanged(nameof(CanRestore));
+        OnPropertyChanged(nameof(CanSaveLocally));
     }
 
     private static string GetUserError(Exception exception)

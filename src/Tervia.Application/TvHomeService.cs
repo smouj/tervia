@@ -22,6 +22,13 @@ public sealed class TvHomeService(
         return (existing ?? new TvHomeProfile()).ForDevice(device);
     }
 
+    public async Task SaveProfileLocallyAsync(TvDevice device, TvHomeProfile profile, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(device);
+        ArgumentNullException.ThrowIfNull(profile);
+        await profiles.SaveAsync(device.Id, profile.ForDevice(device), cancellationToken).ConfigureAwait(false);
+    }
+
     public async Task<IReadOnlyList<TvApplication>> ListApplicationsAsync(TvDevice device, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(device);

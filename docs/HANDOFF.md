@@ -7,8 +7,9 @@ Context for a coding agent continuing this repository.
 - Tervia Home is a primary product workflow: Windows configures a launcher running on a
   compatible Android TV, Google TV or integrated Fire TV. The desktop app also retains
   its local TV library and cross-platform discovery.
-- Launcher personalization includes title, subtitle, theme, clock, visible apps and
-  pinned-first ordering. Keep app settings local per TV and send them only on an explicit
+- Launcher personalization includes title, subtitle, apps heading, eight palettes,
+  clock/branding visibility, card density, visible apps and manual pinned order. Keep each
+  profile local per TV; local save must never contact the TV, and apply only on an explicit
   user action.
 - Replacing the default launcher must use Android's system role/home selection and
   consent. Never remove or disable the manufacturer's launcher; always keep a clear path
@@ -28,8 +29,11 @@ Context for a coding agent continuing this repository.
 - Basic Android/Google/Fire TV remote keys (directional, OK, back, home, menu) are
   exposed in the UI. Each press opens and closes an explicit ADB session.
 - A separate `Tervia.Home.Android` APK provides a D-pad-friendly Home screen. The WinUI
-  page configures title, subtitle, theme, clock, app visibility and pinned order; it
-  installs/updates the APK and sends the profile over the user's authorized ADB session.
+  page has a live 16:9 preview. It uses the selected TV's package inventory, but ADB does
+  not return app labels/icons; Windows uses curated labels/fallback names and monograms,
+  while Android renders the TV's native app names/icons. With no TV selected, the preview
+  labels its sample apps. The page saves profiles locally without ADB and sends them only
+  through the explicit install/apply actions.
 - Tervia Home requests the Android `HOME` role from the TV, which displays its own
   confirmation. The original launcher remains installed. Returning to the original home
   app opens Android's home-app settings.

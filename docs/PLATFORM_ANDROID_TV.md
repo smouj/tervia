@@ -17,7 +17,8 @@ Implemented:
 - best-effort removal of the temporary file on the TV, the host transfer file, and the host-side ADB disconnect
 - structured argument construction, no local shell concatenation
 - companion Tervia Home APK with Android `HOME` and TV launcher declarations
-- Windows editor for per-TV title, subtitle, accent theme, clock, visible apps and pinned-first order
+- Windows editor for each TV's title, subtitle, applications heading, eight coordinated colour palettes,
+  clock, Tervia branding, compact/comfortable app cards, hidden apps and manually ordered pinned apps
 - install/update through a user-initiated ADB session; Android's own home-app selection asks before changing the default
 - direct route to Android home-app settings so the user can restore the OEM launcher; no stock launcher package is disabled or removed
 
@@ -42,9 +43,16 @@ validated Base64 JSON to an explicit component; the Android app applies a size l
 text cleanup, package-id allowlist and theme allowlist before storing it. No privileged
 Android permission is requested.
 
-The desktop preview uses placeholder app cards; the launcher on the television reads
-the actual apps installed there. Visibility changes affect only the Tervia Home grid and
-do not disable, hide or uninstall any Android package. Pinned apps sort before the rest.
+The desktop preview mirrors the launcher's 16:9 layout and updates while you edit. When a
+supported TV is selected, it uses that TV's app inventory and the same pinned-first order,
+visibility, text, palette, clock, branding and card density sent to the APK. ADB currently
+returns package identifiers rather than Android's app labels or icon files, so Windows
+shows curated names for common apps, a readable package-name fallback for other apps, and
+monograms. The TV renders the installed apps' original names and icons. Visibility changes
+affect only the Tervia Home grid and do not disable, hide or uninstall any Android package.
+Pinned apps preserve their manually selected order and sort before the remaining visible apps.
+The number of columns on the TV adapts to its reported screen width; Windows' fixed 16:9
+preview shows the design but cannot prove the exact layout on an untested model.
 
 Making Tervia Home the default requires the user's confirmation on the TV. On Android
 versions or vendor builds that do not offer the role request UI, Tervia opens home-app
