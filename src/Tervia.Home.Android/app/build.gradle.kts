@@ -2,6 +2,13 @@ plugins {
     id("com.android.application")
 }
 
+val terviaHomeVersionName = providers.environmentVariable("TERVIA_HOME_VERSION_NAME")
+    .orElse("0.2.0-alpha")
+    .get()
+val terviaHomeVersionCode = providers.environmentVariable("TERVIA_HOME_VERSION_CODE")
+    .map { it.toInt() }
+    .getOrElse(1)
+
 android {
     namespace = "com.tervia.home"
     compileSdk = 36
@@ -10,8 +17,8 @@ android {
         applicationId = "com.tervia.home"
         minSdk = 23
         targetSdk = 36
-        versionCode = 1
-        versionName = "0.2.0-alpha"
+        versionCode = terviaHomeVersionCode
+        versionName = terviaHomeVersionName
     }
 
     signingConfigs {
