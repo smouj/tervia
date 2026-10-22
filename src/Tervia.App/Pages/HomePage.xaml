@@ -6,10 +6,10 @@
     Loaded="OnLoaded"
     Unloaded="OnUnloaded">
     <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <StackPanel Padding="26" Spacing="18" MaxWidth="1180" HorizontalAlignment="Center">
+        <StackPanel Padding="26" Spacing="18" MaxWidth="1280" HorizontalAlignment="Center">
             <StackPanel Spacing="4">
                 <TextBlock Text="Inicio de TV" FontSize="30" FontWeight="SemiBold" />
-                <TextBlock Text="Diseña la pantalla que aparece al pulsar Inicio en una TV Android compatible."
+                <TextBlock Text="Personaliza el launcher de Tervia Home y comprueba cada cambio en una vista 16:9 antes de aplicarlo a la TV."
                            FontSize="14" Opacity="0.76" TextWrapping="Wrap" />
             </StackPanel>
 
@@ -19,76 +19,151 @@
                 <TextBlock x:Name="ErrorText" TextWrapping="Wrap" />
             </Border>
 
-            <Border Padding="20" CornerRadius="14"
+            <Border Padding="18" CornerRadius="14"
                     Background="#141D2B" BorderBrush="#28364A" BorderThickness="1">
-                <Grid ColumnSpacing="24">
+                <Grid ColumnSpacing="22">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="330" />
+                        <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <StackPanel Spacing="14">
-                        <StackPanel Spacing="4">
-                            <TextBlock Text="PERSONALIZA TU INICIO" FontSize="11" CharacterSpacing="90"
-                                       Foreground="#49D8F2" FontWeight="SemiBold" />
-                            <TextBlock Text="Tu selección se guarda localmente para cada TV." FontSize="13" Opacity="0.76"
-                                       TextWrapping="Wrap" />
-                        </StackPanel>
-                        <TextBox x:Name="TitleInput" Header="Título" MaxLength="42"
-                                 Text="{x:Bind ViewModel.Title, Mode=TwoWay}"
-                                 PlaceholderText="Mi televisión" />
-                        <TextBox x:Name="SubtitleInput" Header="Subtítulo" MaxLength="88"
-                                 Text="{x:Bind ViewModel.Subtitle, Mode=TwoWay}"
-                                 PlaceholderText="Todo tu entretenimiento, en un mismo lugar." />
-                        <ComboBox x:Name="ThemeSelector" Header="Color de acento"
-                                  SelectedIndex="0" SelectionChanged="OnThemeSelectionChanged">
-                            <ComboBoxItem Content="Océano" Tag="ocean" />
-                            <ComboBoxItem Content="Violeta" Tag="violet" />
-                            <ComboBoxItem Content="Atardecer" Tag="sunset" />
-                            <ComboBoxItem Content="Bosque" Tag="forest" />
-                        </ComboBox>
-                        <Button x:Name="ClockButton" Content="{x:Bind ViewModel.ShowClockLabel, Mode=OneWay}"
-                                Click="OnClockToggleClick" HorizontalAlignment="Left" />
-                    </StackPanel>
 
-                    <StackPanel Grid.Column="1" Spacing="10">
-                        <TextBlock Text="VISTA PREVIA" FontSize="11" CharacterSpacing="90" Opacity="0.72"
-                                   FontWeight="SemiBold" />
-                        <Border x:Name="PreviewAccentBorder" Padding="20" CornerRadius="14" Background="#071A2D"
-                                BorderBrush="#284969" BorderThickness="1" MinHeight="230">
-                            <StackPanel Spacing="14">
-                                <StackPanel Orientation="Horizontal" Spacing="9">
-                                    <Image Source="ms-appx:///Assets/logo-tervia-white.png" Width="28" Height="28"
-                                           Stretch="Uniform" />
-                                    <StackPanel Spacing="0" VerticalAlignment="Center">
-                                        <TextBlock Text="TERVIA HOME" FontSize="12" FontWeight="SemiBold" />
-                                        <TextBlock Text="TU TELEVISOR, A TU MANERA" FontSize="8" Opacity="0.72" />
-                                    </StackPanel>
-                                    <TextBlock x:Name="PreviewClock" Text="12:45" HorizontalAlignment="Right" Margin="12,0,0,0"
-                                               VerticalAlignment="Center" Opacity="0.8" />
-                                </StackPanel>
-                                <StackPanel Spacing="3">
-                                    <TextBlock x:Name="PreviewEyebrow" Text="UN INICIO MÁS TUYO" FontSize="9" Foreground="#49D8F2"
-                                               FontWeight="SemiBold" />
-                                    <TextBlock Text="{x:Bind ViewModel.Title, Mode=OneWay}" FontSize="24"
-                                               FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
-                                    <TextBlock Text="{x:Bind ViewModel.Subtitle, Mode=OneWay}" FontSize="12"
-                                               Opacity="0.8" TextWrapping="Wrap" MaxLines="2" />
-                                </StackPanel>
-                                <StackPanel Orientation="Horizontal" Spacing="10">
-                                    <Border Width="112" Height="60" CornerRadius="10" Background="#132C48">
-                                        <TextBlock Text="Aplicación" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                    </Border>
-                                    <Border Width="112" Height="60" CornerRadius="10" Background="#132C48">
-                                        <TextBlock Text="Aplicación" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                    </Border>
-                                    <Border Width="112" Height="60" CornerRadius="10" Background="#132C48">
-                                        <TextBlock Text="Aplicación" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                    </Border>
-                                </StackPanel>
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="590">
+                        <StackPanel Spacing="11" Padding="2,0,6,0">
+                            <StackPanel Spacing="4">
+                                <TextBlock Text="PERSONALIZA TU INICIO" FontSize="11" CharacterSpacing="90"
+                                           Foreground="#49D8F2" FontWeight="SemiBold" />
+                                <TextBlock Text="Guarda un perfil local por TV; enviar los cambios al launcher es una acción aparte." FontSize="13" Opacity="0.76"
+                                           TextWrapping="Wrap" />
                             </StackPanel>
+                            <TextBox x:Name="TitleInput" Header="Título principal" MaxLength="42"
+                                     Text="{x:Bind ViewModel.Title, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                     TextChanged="OnPreviewTextChanged"
+                                     PlaceholderText="Mi televisión" />
+                            <TextBox x:Name="SubtitleInput" Header="Subtítulo" MaxLength="88"
+                                     Text="{x:Bind ViewModel.Subtitle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                     TextChanged="OnPreviewTextChanged"
+                                     PlaceholderText="Todo tu entretenimiento, en un mismo lugar." />
+                            <TextBox x:Name="ApplicationsTitleInput" Header="Título de aplicaciones" MaxLength="36"
+                                     Text="{x:Bind ViewModel.ApplicationsTitle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                     TextChanged="OnPreviewTextChanged"
+                                     PlaceholderText="Tus aplicaciones" />
+                            <ComboBox x:Name="ThemeSelector" Header="Paleta de color" SelectionChanged="OnThemeSelectionChanged">
+                                <ComboBoxItem Content="Océano" Tag="ocean" />
+                                <ComboBoxItem Content="Violeta" Tag="violet" />
+                                <ComboBoxItem Content="Atardecer" Tag="sunset" />
+                                <ComboBoxItem Content="Bosque" Tag="forest" />
+                                <ComboBoxItem Content="Rosa" Tag="rose" />
+                                <ComboBoxItem Content="Dorado" Tag="gold" />
+                                <ComboBoxItem Content="Hielo" Tag="ice" />
+                                <ComboBoxItem Content="Grafito" Tag="graphite" />
+                            </ComboBox>
+                            <ComboBox x:Name="CardLayoutSelector" Header="Tamaño de tarjetas"
+                                      SelectionChanged="OnCardLayoutSelectionChanged">
+                                <ComboBoxItem Content="Cómodas" Tag="comfortable" />
+                                <ComboBoxItem Content="Compactas" Tag="compact" />
+                            </ComboBox>
+                            <Button x:Name="ClockButton" Content="{x:Bind ViewModel.ShowClockLabel, Mode=OneWay}"
+                                    Click="OnClockToggleClick" HorizontalAlignment="Left" />
+                            <Button x:Name="BrandingButton" Content="{x:Bind ViewModel.ShowBrandingLabel, Mode=OneWay}"
+                                    Click="OnBrandingToggleClick" HorizontalAlignment="Left" />
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    <StackPanel Grid.Column="1" Spacing="8" MinWidth="0">
+                        <Grid>
+                            <TextBlock Text="VISTA PREVIA EN VIVO" FontSize="11" CharacterSpacing="90"
+                                       FontWeight="SemiBold" VerticalAlignment="Center" />
+                            <TextBlock Text="16:9 · vista orientativa" FontSize="11" Opacity="0.68"
+                                       HorizontalAlignment="Right" VerticalAlignment="Center" />
+                        </Grid>
+                        <Border Padding="5" CornerRadius="12" Background="#080B11"
+                                BorderBrush="#354356" BorderThickness="1">
+                            <Viewbox Stretch="Uniform" HorizontalAlignment="Stretch" VerticalAlignment="Top">
+                                <Grid x:Name="PreviewScreen" Width="960" Height="540">
+                                    <Grid.Background>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                            <GradientStop x:Name="PreviewBackgroundStart" Color="#FF071220" Offset="0" />
+                                            <GradientStop x:Name="PreviewBackgroundMiddle" Color="#FF0A233E" Offset="0.55" />
+                                            <GradientStop x:Name="PreviewBackgroundEnd" Color="#FF0B192D" Offset="1" />
+                                        </LinearGradientBrush>
+                                    </Grid.Background>
+                                    <StackPanel Padding="39,22,39,20" Spacing="16">
+                                        <Grid x:Name="PreviewHeader" Height="32">
+                                            <StackPanel x:Name="PreviewBrand" Orientation="Horizontal" Spacing="9"
+                                                        VerticalAlignment="Center">
+                                                <Image Source="ms-appx:///Assets/logo-tervia-white.png" Width="31" Height="31"
+                                                       Stretch="Uniform" />
+                                                <StackPanel Spacing="0" VerticalAlignment="Center">
+                                                    <TextBlock Text="TERVIA HOME" FontSize="11" FontWeight="SemiBold" />
+                                                    <TextBlock Text="TU TELEVISOR, A TU MANERA" FontSize="7" Opacity="0.72" />
+                                                </StackPanel>
+                                            </StackPanel>
+                                            <TextBlock x:Name="PreviewClock" Text="12:45" HorizontalAlignment="Right"
+                                                       VerticalAlignment="Center" FontSize="15" FontWeight="SemiBold"
+                                                       Opacity="0.85" />
+                                        </Grid>
+
+                                        <Border x:Name="PreviewHero" Padding="20,13" CornerRadius="17"
+                                                BorderBrush="#5539D8F2" BorderThickness="1">
+                                            <Border.Background>
+                                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                                    <GradientStop x:Name="PreviewHeroStart" Color="#E6112F52" Offset="0" />
+                                                    <GradientStop x:Name="PreviewHeroEnd" Color="#CC102447" Offset="1" />
+                                                </LinearGradientBrush>
+                                            </Border.Background>
+                                            <StackPanel Spacing="3">
+                                                <TextBlock x:Name="PreviewEyebrow" Text="UN INICIO MÁS TUYO" FontSize="8"
+                                                           Foreground="#49D8F2" FontWeight="SemiBold" />
+                                                <TextBlock x:Name="PreviewTitle" Text="Mi televisión" FontSize="25"
+                                                           FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+                                                <TextBlock x:Name="PreviewSubtitle" Text="Todo tu entretenimiento, en un mismo lugar."
+                                                           FontSize="13" Opacity="0.86" TextWrapping="Wrap" MaxLines="2" />
+                                                <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,6,0,0">
+                                                    <Border Padding="12,5" CornerRadius="7" Background="#233B5A">
+                                                        <TextBlock Text="Usar Tervia Home como inicio" FontSize="9" />
+                                                    </Border>
+                                                    <Border Padding="12,5" CornerRadius="7" Background="#1A2C42">
+                                                        <TextBlock Text="Elegir inicio original" FontSize="9" Opacity="0.84" />
+                                                    </Border>
+                                                </StackPanel>
+                                            </StackPanel>
+                                        </Border>
+
+                                        <Grid ColumnSpacing="8">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel Spacing="2">
+                                                <TextBlock x:Name="PreviewApplicationsTitle" Text="Tus aplicaciones"
+                                                           FontSize="17" FontWeight="SemiBold" />
+                                                <TextBlock Text="Selecciona una aplicación con el mando de tu televisor."
+                                                           FontSize="10" Opacity="0.72" />
+                                            </StackPanel>
+                                            <Border Grid.Column="1" Padding="8,5" CornerRadius="7"
+                                                    Background="#33232F43" VerticalAlignment="Center">
+                                                <TextBlock x:Name="PreviewInventoryBadge" Text="MUESTRA DE DISEÑO"
+                                                           FontSize="7" CharacterSpacing="55" FontWeight="SemiBold" />
+                                            </Border>
+                                        </Grid>
+
+                                        <Grid Height="114">
+                                            <StackPanel x:Name="PreviewAppsPanel" Orientation="Horizontal" Spacing="9"
+                                                        VerticalAlignment="Top" />
+                                            <TextBlock x:Name="PreviewEmptyState"
+                                                       Text="Selecciona una TV compatible para ver aquí las aplicaciones reales de su inventario."
+                                                       TextWrapping="Wrap" FontSize="11" Opacity="0.72"
+                                                       VerticalAlignment="Center" MaxWidth="560" />
+                                        </Grid>
+
+                                        <TextBlock Text="La pantalla original de la TV se conserva y se puede volver a elegir desde Ajustes."
+                                                   FontSize="9" Opacity="0.68" TextWrapping="Wrap" />
+                                    </StackPanel>
+                                </Grid>
+                            </Viewbox>
                         </Border>
-                        <TextBlock Text="La vista previa es orientativa; las aplicaciones y sus iconos se cargan desde la TV."
-                                   FontSize="11" Opacity="0.68" TextWrapping="Wrap" />
+                        <TextBlock Text="La preview refleja textos, colores, tarjetas y orden. La TV puede adaptar las columnas a su resolución; Android usa sus nombres e iconos originales y aquí se muestran monogramas orientativos."
+                                   FontSize="11" Opacity="0.72" TextWrapping="Wrap" />
                     </StackPanel>
                 </Grid>
             </Border>
@@ -98,27 +173,35 @@
                 <StackPanel Spacing="12">
                     <StackPanel Spacing="4">
                         <TextBlock Text="Aplicaciones de la TV" FontSize="20" FontWeight="SemiBold" />
-                        <TextBlock Text="Elige cuáles se muestran y cuáles aparecen primero en Tervia Home."
+                        <TextBlock Text="Oculta las que no quieras y fija tus favoritas. Usa las flechas para establecer el orden exacto de las fijadas."
                                    FontSize="13" Opacity="0.76" TextWrapping="Wrap" />
                     </StackPanel>
                     <ListView ItemsSource="{x:Bind ViewModel.Applications, Mode=OneWay}"
-                              MaxHeight="360" SelectionMode="None" IsItemClickEnabled="False">
+                              MaxHeight="390" SelectionMode="None" IsItemClickEnabled="False">
                         <ListView.ItemTemplate>
                             <DataTemplate x:DataType="vm:HomeApplicationOption">
-                                <Grid Padding="8,6" ColumnSpacing="16">
+                                <Grid Padding="8,6" ColumnSpacing="8">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*" />
                                         <ColumnDefinition Width="Auto" />
                                         <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
                                     <StackPanel Spacing="2" VerticalAlignment="Center">
-                                        <TextBlock Text="{x:Bind Name}" FontWeight="SemiBold" />
+                                        <TextBlock Text="{x:Bind DisplayName}" FontWeight="SemiBold" />
                                         <TextBlock Text="{x:Bind Id}" FontSize="11" Opacity="0.65"
                                                    FontFamily="Consolas" />
                                     </StackPanel>
-                                    <Button Grid.Column="1" Content="{x:Bind VisibilityLabel, Mode=OneWay}"
+                                    <Button Grid.Column="1" Content="↑" IsEnabled="{x:Bind CanMoveUp, Mode=OneWay}"
+                                            ToolTipService.ToolTip="Subir en las aplicaciones fijadas"
+                                            Click="OnMoveUpClick" />
+                                    <Button Grid.Column="2" Content="↓" IsEnabled="{x:Bind CanMoveDown, Mode=OneWay}"
+                                            ToolTipService.ToolTip="Bajar en las aplicaciones fijadas"
+                                            Click="OnMoveDownClick" />
+                                    <Button Grid.Column="3" Content="{x:Bind VisibilityLabel, Mode=OneWay}"
                                             Click="OnVisibilityClick" />
-                                    <Button Grid.Column="2" Content="{x:Bind PinLabel, Mode=OneWay}"
+                                    <Button Grid.Column="4" Content="{x:Bind PinLabel, Mode=OneWay}"
                                             Click="OnPinClick" />
                                 </Grid>
                             </DataTemplate>
@@ -138,12 +221,14 @@
             <StackPanel Orientation="Horizontal" Spacing="10">
                 <Button Content="Instalar y abrir en la TV" Click="OnInstallClick"
                         IsEnabled="{x:Bind ViewModel.CanInstall, Mode=OneWay}" />
-                <Button Content="Guardar cambios en la TV" Click="OnApplyClick"
+                <Button Content="Guardar diseño en este equipo" Click="OnSaveLocalClick"
+                        IsEnabled="{x:Bind ViewModel.CanSaveLocally, Mode=OneWay}" />
+                <Button Content="Enviar diseño a la TV" Click="OnApplyClick"
                         IsEnabled="{x:Bind ViewModel.CanSync, Mode=OneWay}" />
                 <Button Content="Elegir launcher en la TV" Click="OnRestoreClick"
                         IsEnabled="{x:Bind ViewModel.CanRestore, Mode=OneWay}" />
             </StackPanel>
-            <TextBlock Text="La pantalla original del fabricante no se desinstala ni se desactiva. Android solicitará en la TV que confirmes Tervia Home como inicio; puedes volver a elegir el original en cualquier momento."
+            <TextBlock Text="El launcher original del fabricante no se desinstala ni se desactiva. Android pedirá confirmar Tervia Home en la TV y permite volver a elegir el original desde Ajustes."
                        FontSize="12" Opacity="0.72" TextWrapping="Wrap" MaxWidth="900" />
         </StackPanel>
     </ScrollViewer>

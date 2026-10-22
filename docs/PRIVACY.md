@@ -8,17 +8,20 @@ remoto de Tervia.
 - Guarda la biblioteca de televisores en `%LOCALAPPDATA%\Tervia\tvs\library.json`.
 - Guarda un perfil de personalización de Tervia Home por TV en
   `%LOCALAPPDATA%\Tervia\profiles\home`. El nombre de archivo deriva de un hash del
-  identificador local de la TV; el JSON contiene título, subtítulo, tema, reloj y los
-  identificadores de paquetes que se muestran u ordenan primero.
+  identificador local de la TV; el JSON contiene título, subtítulo, título de sección,
+  paleta, visibilidad de reloj/marca, tamaño de tarjetas y los identificadores de paquetes
+  que se muestran, se ocultan o se fijan en un orden elegido.
 - La búsqueda envía consultas SSDP/mDNS en la red local y recibe anuncios de los
   dispositivos que respondan. No usa un servidor de Tervia.
 - El alta manual valida la sintaxis de una dirección IP, pero no intenta conectarse a
   esa dirección.
 - El control remoto solo conecta al pulsar una tecla en el perfil seleccionado. Cada
   acción envía una tecla ADB y después Tervia intenta cerrar la conexión al televisor.
-- Instalar/actualizar Tervia Home y sincronizar su diseño también conectan solo al pulsar
-  sus botones. El diseño se guarda localmente y en las preferencias privadas de Tervia
-  Home; no se sincroniza con una cuenta, servidor ni otro equipo.
+- **Guardar diseño en este equipo** escribe el perfil local sin conectarse a la TV.
+  Instalar/actualizar Tervia Home y enviarle el diseño solo conectan tras pulsar sus
+  botones. Al aplicarlo correctamente, el perfil queda guardado localmente y en las
+  preferencias privadas de Tervia Home; no se sincroniza con una cuenta, servidor ni otro
+  equipo.
 - Al abrir la sección **Inicio de TV**, Tervia consulta por ADB el inventario de apps de
   la TV seleccionada para poder mostrarlas en el editor. No consulta otras TVs de la
   biblioteca y cierra la sesión al terminar.

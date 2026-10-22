@@ -23,25 +23,26 @@ Personaliza Tervia Home, elige qué aplicaciones aparecen y selecciona el inicio
 
 Tervia combina una aplicación de escritorio para Windows con **Tervia Home**, un launcher
 para televisores Android TV, Google TV y algunos Fire TV que permiten ADB por red. Desde
-Windows eliges el título, subtítulo, color, reloj y aplicaciones visibles o fijadas; en
-la TV, Android muestra su propia confirmación para establecer la pantalla de inicio.
+Windows ajustas título, subtítulo, sección, paleta, reloj, marca, tamaño y orden de las
+aplicaciones; en la TV, Android muestra su propia confirmación para establecer el inicio.
 El inicio del fabricante permanece instalado y se puede volver a elegir en Ajustes.
 Tervia también descubre y organiza televisores físicos de otros sistemas, mostrando con
 claridad qué funciones están implementadas y cuáles siguen pendientes.
 
-> **Estado: alpha.** Tervia Home ya tiene APK propio, vista previa en Windows y controles
-> para personalizar aplicaciones, apariencia y textos. La instalación y el cambio de
-> launcher requieren que la TV permita ADB por red, que el usuario autorice este PC y
+> **Estado: alpha.** Tervia Home ya tiene APK propio, preview en vivo 16:9 y controles
+> para personalizar ocho paletas, cabecera, textos, densidad y orden de aplicaciones.
+> Instalar y cambiar el launcher requiere que la TV permita ADB por red, que el usuario autorice este PC y
 > que confirme Tervia Home en Android. La app no desactiva ni elimina el launcher original.
 > El flujo está compilado y probado automáticamente; aún no se ha validado en modelos de
 > TV físicos, así que la compatibilidad depende del fabricante y firmware.
 
 ## Capturas de pantalla
 
-Capturas reales de **Tervia 0.2.0-alpha** ejecutándose en Windows, a 1360 × 768.
-Muestran la aplicación de escritorio; **no son imágenes de la pantalla de una TV**.
-Se tomaron sin una TV seleccionada, por eso el editor muestra las aplicaciones de
-ejemplo y mantiene deshabilitadas las acciones que necesitan una conexión.
+Las capturas incluidas aquí se tomaron antes del editor de preview en vivo de
+**0.3.0-alpha**. Son referencias de la interfaz anterior; no representan el diseño
+actual de **Inicio de TV** y no son imágenes de la pantalla de una TV. La nueva preview
+se muestra en la app y distingue la muestra de diseño de un inventario real. La captura
+de la interfaz actual queda pendiente; no se sustituye por un mockup.
 
 | Inicio | Inicio de TV |
 | --- | --- |
@@ -51,8 +52,11 @@ ejemplo y mantiene deshabilitadas las acciones que necesitan una conexión.
 | --- | --- |
 | ![Descubrimiento local SSDP y mDNS](assets/screenshots/discovery.png) | ![Datos locales y privacidad de Tervia](assets/screenshots/privacy.png) |
 
-La vista previa de **Inicio de TV** representa el diseño que puedes configurar desde
-Windows. En una TV compatible, Tervia Home carga sus propias aplicaciones e iconos.
+La vista previa de **Inicio de TV** reproduce el layout 16:9 y refleja en vivo los textos,
+la paleta, el tamaño de tarjetas, las aplicaciones visibles y el orden de las fijadas.
+Como el inventario ADB entrega identificadores de paquetes y no iconos, la preview usa
+monogramas; en la TV Tervia Home muestra los nombres e iconos nativos que Android ofrece.
+El número de columnas se adapta a la resolución y densidad que exponga cada televisor.
 La captura de pantalla de la TV se obtiene por ADB bajo demanda; la compatibilidad
 física aún depende del modelo y firmware.
 
@@ -73,7 +77,9 @@ abrir Tervia.
 
 El ZIP de **Releases** incluye .NET y Windows App SDK. La publicación `v0.1.0-alpha`
 es anterior a Tervia Home; desde `v0.2.0-alpha`, el ZIP incluye
-`Tervia.Home.Android.apk`, firmado con la clave estable del proyecto. Los paquetes
+`Tervia.Home.Android.apk`, firmado con la clave estable del proyecto. La versión
+`v0.3.0-alpha` añade la preview personalizable en vivo y el editor de launcher descritos
+arriba. Los paquetes
 posteriores conservan la firma y aumentan el código de versión para permitir
 actualizaciones. Revisa las notas de cada [release](https://github.com/smouj/tervia/releases)
 y la [matriz de compatibilidad](docs/COMPATIBILITY.md): aún falta validar el launcher en
@@ -94,10 +100,14 @@ Consulta [Seguridad](SECURITY.md) para informar de problemas.
 
 ## Qué puedes hacer ahora
 
-- **Diseñar Tervia Home:** cambiar título, subtítulo, tema de color y reloj; ocultar apps
-  de la cuadrícula o fijar algunas primero. Cada perfil queda guardado por televisor en
-  este PC. Al abrir el editor, Tervia consulta por ADB el inventario de apps de la TV
-  seleccionada; solo sincroniza el diseño cuando eliges la acción.
+- **Diseñar Tervia Home:** editar título, subtítulo y cabecera de aplicaciones; elegir
+  entre ocho paletas, tarjetas cómodas o compactas y mostrar u ocultar el reloj y la marca.
+  La preview 16:9 cambia en vivo con tus ajustes. Con una TV Android seleccionada, enseña
+  sus aplicaciones detectadas y refleja visibilidad, fijación y orden exacto de las fijadas.
+  Los iconos en miniatura son monogramas orientativos; el APK muestra el nombre y el icono
+  originales de Android. **Guardar diseño en este equipo** conserva el perfil local de
+  esa TV sin conectarse; **Enviar diseño a la TV** lo sincroniza mediante ADB de forma
+  explícita. La selección de una pantalla de inicio también requiere confirmación en Android.
 - **Instalar en la TV:** el APK se distribuye junto al ejecutable. La instalación se
   dirige a Android TV, Google TV y televisores Fire TV compatibles. Antes debes activar
   ADB/developer mode en la TV y aceptar el aviso de autorización de este PC. Para
@@ -137,7 +147,7 @@ en hardware real todavía.
 | Alta manual y biblioteca local | Disponible; guardar no inicia una conexión |
 | Captura de pantalla bajo demanda por ADB | Implementada para Android/Google/Fire TV; pendiente de validación física por modelo |
 | Teclas básicas del control remoto por ADB | Implementadas para Android/Google/Fire TV; pendientes de validación física por modelo |
-| Tervia Home: instalar, aplicar textos/tema/reloj y gestionar visibilidad/orden de apps | Implementado; pendiente de validación física por modelo |
+| Tervia Home: instalar, aplicar textos, ocho paletas, cabecera, reloj/marca, tamaño y orden/visibilidad de tarjetas | Implementado; pendiente de validación física por modelo |
 | Gestión de apps y diagnósticos generales desde la interfaz | Pendiente |
 | Emparejamiento Tizen/webOS y pruebas físicas por modelo | Pendiente |
 | Captura de pantalla en Roku, Tizen, webOS y VIDAA | No disponible en esta alpha |

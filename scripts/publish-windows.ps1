@@ -1,6 +1,6 @@
 param(
     [string]$OutputDirectory = (Join-Path $PSScriptRoot '..\artifacts\publish\win-x64'),
-    [string]$Version = '0.2.0-alpha',
+    [string]$Version = '0.3.0-alpha',
     [ValidateSet('debug', 'release')]
     [string]$HomeBuildVariant = 'debug'
 )

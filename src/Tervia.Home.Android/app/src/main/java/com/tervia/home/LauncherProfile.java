@@ -32,33 +32,46 @@ final class LauncherProfile {
         themes.add("violet");
         themes.add("sunset");
         themes.add("forest");
+        themes.add("rose");
+        themes.add("gold");
+        themes.add("ice");
+        themes.add("graphite");
         THEMES = Collections.unmodifiableSet(themes);
     }
 
     final String title;
     final String subtitle;
+    final String applicationsTitle;
     final String theme;
+    final String cardLayout;
     final boolean showClock;
+    final boolean showBranding;
     final List<String> pinnedPackages;
     final List<String> hiddenPackages;
 
     private LauncherProfile(
             String title,
             String subtitle,
+            String applicationsTitle,
             String theme,
+            String cardLayout,
             boolean showClock,
+            boolean showBranding,
             List<String> pinnedPackages,
             List<String> hiddenPackages) {
         this.title = title;
         this.subtitle = subtitle;
+        this.applicationsTitle = applicationsTitle;
         this.theme = theme;
+        this.cardLayout = cardLayout;
         this.showClock = showClock;
+        this.showBranding = showBranding;
         this.pinnedPackages = Collections.unmodifiableList(pinnedPackages);
         this.hiddenPackages = Collections.unmodifiableList(hiddenPackages);
     }
 
     static LauncherProfile defaults() {
-        return new LauncherProfile(DEFAULT_TITLE, DEFAULT_SUBTITLE, "ocean", true,
+        return new LauncherProfile(DEFAULT_TITLE, DEFAULT_SUBTITLE, "Tus aplicaciones", "ocean", "comfortable", true, true,
                 Collections.emptyList(), Collections.emptyList());
     }
 
@@ -88,12 +101,19 @@ final class LauncherProfile {
         if (!THEMES.contains(theme)) {
             theme = "ocean";
         }
+        String cardLayout = json.optString("cardLayout", "comfortable").toLowerCase(java.util.Locale.ROOT);
+        if (!"compact".equals(cardLayout) && !"comfortable".equals(cardLayout)) {
+            cardLayout = "comfortable";
+        }
 
         return new LauncherProfile(
                 title,
                 subtitle,
+                cleanText(json.optString("applicationsTitle", "Tus aplicaciones"), "Tus aplicaciones", 36),
                 theme,
+                cardLayout,
                 json.optBoolean("showClock", true),
+                json.optBoolean("showBranding", true),
                 readPackages(json.optJSONArray("pinnedApplicationIds")),
                 readPackages(json.optJSONArray("hiddenApplicationIds")));
     }
@@ -103,8 +123,11 @@ final class LauncherProfile {
         json.put("version", 1);
         json.put("title", title);
         json.put("subtitle", subtitle);
+        json.put("applicationsTitle", applicationsTitle);
         json.put("theme", theme);
+        json.put("cardLayout", cardLayout);
         json.put("showClock", showClock);
+        json.put("showBranding", showBranding);
         json.put("pinnedApplicationIds", toArray(pinnedPackages));
         json.put("hiddenApplicationIds", toArray(hiddenPackages));
         return json;
@@ -115,7 +138,37 @@ final class LauncherProfile {
             case "violet": return 0xFF9B8CFF;
             case "sunset": return 0xFFFFB45A;
             case "forest": return 0xFF55D6A3;
+            case "rose": return 0xFFFF78A8;
+            case "gold": return 0xFFF2D45C;
+            case "ice": return 0xFF7CCBFF;
+            case "graphite": return 0xFFC1CBD6;
             default: return 0xFF39D8F2;
+        }
+    }
+
+    static int[] backgroundColors(String theme) {
+        switch (theme) {
+            case "violet": return new int[]{0xFF100C20, 0xFF241A46, 0xFF17152F};
+            case "sunset": return new int[]{0xFF1E100D, 0xFF442515, 0xFF1E1828};
+            case "forest": return new int[]{0xFF081A19, 0xFF123A31, 0xFF122320};
+            case "rose": return new int[]{0xFF1B101C, 0xFF412135, 0xFF20182D};
+            case "gold": return new int[]{0xFF1C190C, 0xFF433719, 0xFF222013};
+            case "ice": return new int[]{0xFF0A1722, 0xFF16334A, 0xFF111E32};
+            case "graphite": return new int[]{0xFF111419, 0xFF2B323B, 0xFF191C22};
+            default: return new int[]{0xFF071220, 0xFF0A233E, 0xFF0B192D};
+        }
+    }
+
+    static int[] heroColors(String theme) {
+        switch (theme) {
+            case "violet": return new int[]{0xE61E1947, 0xCC181C3D};
+            case "sunset": return new int[]{0xE645291B, 0xCC302131};
+            case "forest": return new int[]{0xE61A3B32, 0xCC132D2A};
+            case "rose": return new int[]{0xE6422035, 0xCC2E1D31};
+            case "gold": return new int[]{0xE63B3217, 0xCC292719};
+            case "ice": return new int[]{0xE6173850, 0xCC152D45};
+            case "graphite": return new int[]{0xE62D333D, 0xCC232833};
+            default: return new int[]{0xE6112F52, 0xCC102447};
         }
     }
 

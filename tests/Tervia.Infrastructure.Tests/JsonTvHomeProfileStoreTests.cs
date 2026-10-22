@@ -18,7 +18,11 @@ public sealed class JsonTvHomeProfileStoreTests
             var profile = new TvHomeProfile
             {
                 Title = "Cinema",
+                ApplicationsTitle = "Ver ahora",
                 Theme = "violet",
+                CardLayout = "compact",
+                ShowClock = false,
+                ShowBranding = false,
                 PinnedApplicationIds = ["com.example.video"],
             };
 
@@ -27,7 +31,11 @@ public sealed class JsonTvHomeProfileStoreTests
 
             Assert.NotNull(loaded);
             Assert.Equal(profile.Title, loaded.Title);
+            Assert.Equal(profile.ApplicationsTitle, loaded.ApplicationsTitle);
             Assert.Equal(profile.Theme, loaded.Theme);
+            Assert.Equal(profile.CardLayout, loaded.CardLayout);
+            Assert.Equal(profile.ShowClock, loaded.ShowClock);
+            Assert.Equal(profile.ShowBranding, loaded.ShowBranding);
             Assert.Equal(profile.PinnedApplicationIds, loaded.PinnedApplicationIds);
             Assert.Null(await store.LoadAsync("192.168.1.43", CancellationToken.None));
             Assert.Single(Directory.GetFiles(Path.Combine(paths.Profiles, "home"), "*.json"));

@@ -8,7 +8,7 @@ validados en hardware real todavía.
 
 | Plataforma | Pista o protocolo de descubrimiento | Adaptador en el código | Operaciones desde la interfaz | Hardware verificado |
 | --- | --- | --- | --- | --- |
-| Android TV / Google TV | SSDP y servicios Cast por mDNS | ADB con teclas, captura y Tervia Home | Tervia Home personaliza textos, tema, reloj, visibilidad y orden; la TV solicita confirmar el rol de inicio | Ninguno |
+| Android TV / Google TV | SSDP y servicios Cast por mDNS | ADB con teclas, captura y Tervia Home | Ocho paletas; textos y título de apps; marca, reloj y densidad opcionales; visibilidad y orden manual de apps fijadas. Android pide confirmar el inicio | Ninguno |
 | Fire TV integrado en TV | SSDP; puede sugerirse Android/Fire TV | Adaptador ADB para operaciones documentadas | Tervia Home, control y captura solo si ese modelo ofrece ADB, categorías Android y `screencap` compatibles | Ninguno |
 | Samsung Tizen | SSDP; pairing requiere configuración del televisor | Superficie restringida hasta pairing y pruebas | No disponible todavía | Ninguno |
 | LG webOS | SSDP; Developer Mode/pairing requiere configuración | Superficie restringida hasta pairing y pruebas | No disponible todavía | Ninguno |
