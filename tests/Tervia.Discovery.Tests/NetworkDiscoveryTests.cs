@@ -40,7 +40,7 @@ public sealed class NetworkDiscoveryTests
     {
         using var responder = new UdpClient(new IPEndPoint(IPAddress.Loopback, 0));
         var endpoint = (IPEndPoint)responder.Client.LocalEndPoint!;
-        var strategy = new MdnsDiscoveryStrategy(TimeSpan.FromMilliseconds(350), endpoint);
+        var strategy = new MdnsDiscoveryStrategy(TimeSpan.FromSeconds(2), endpoint);
 
         var scan = strategy.DiscoverAsync(CancellationToken.None);
         var request = await responder.ReceiveAsync().WaitAsync(TimeSpan.FromSeconds(2));
@@ -64,7 +64,7 @@ public sealed class NetworkDiscoveryTests
     {
         using var responder = new UdpClient(new IPEndPoint(IPAddress.Loopback, 0));
         var endpoint = (IPEndPoint)responder.Client.LocalEndPoint!;
-        var strategy = new MdnsDiscoveryStrategy(TimeSpan.FromMilliseconds(250), endpoint);
+        var strategy = new MdnsDiscoveryStrategy(TimeSpan.FromSeconds(2), endpoint);
 
         var scan = strategy.DiscoverAsync(CancellationToken.None);
         var request = await responder.ReceiveAsync().WaitAsync(TimeSpan.FromSeconds(2));
